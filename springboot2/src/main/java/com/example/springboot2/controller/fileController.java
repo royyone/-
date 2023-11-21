@@ -1,30 +1,24 @@
 package com.example.springboot2.controller;
 
 import com.example.springboot2.ApiResult;
-import com.example.springboot2.temp.pptxUpdate;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.colors.Indexed;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.formula.functions.Index;
 import org.apache.poi.ss.usermodel.*;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.Result;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -40,30 +34,66 @@ public class fileController {
         // 处理excel文件
         excelHandle(input);
         // 声明pdf生成类
-        final String TEMP_PATH = "public/Demo2.pdf";
-        String DEST;
-
-        for(int i=1; i<7; i++) { // res.length(); 遍历每条信息
-            DEST = "public/certificate/certificate_" + i + ".pdf";
-            PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
-            DeviceRgb color = new DeviceRgb(31,78,121);
-            PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
-            for(int j=1; j<=3; j++) {
-                PdfFormField receptionistName = form.getFormFields().get("Text"+j);
-                receptionistName.setValue(res[i][j]).setColor(color).setFont(font).setFontSize(18);
-                // 清除表单域
-//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
-            }
-            // 奖项
-            color = new DeviceRgb(128,0,0);
-            font = PdfFontFactory.createFont("public/simkai.ttf");
-            PdfFormField receptionistName = form.getFormFields().get("Text"+4);
-            receptionistName.setValue(res[i][4]).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(54);
-            form.flattenFields();
-            pdfDocument.close();
-        }
         return "win!!!";
+    }
+
+    @PostMapping("/certificateCreate")
+    public String Create(@RequestParam("id") Integer id,@RequestParam("match_name") String match_name,
+                         @RequestParam("college_name") String college_name,@RequestParam("stu_name") String stu_name,
+                         @RequestParam("team_name") String team_name,@RequestParam("adviser") String adviser,@RequestParam("award") String award,
+                         @RequestParam("status") String status) throws IOException {
+        System.out.println(status);
+        String TEMP_PATH = "public/Demo3.pdf";
+        if(status == "未盖章") {
+            TEMP_PATH = "public/Demo2.pdf";
+        }
+        String DEST;
+        DEST = "public/certificate/certificate_" + id + ".pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        DeviceRgb color = new DeviceRgb(31,78,121);
+        PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
+//        for(int j=1; j<=3; j++) {
+        // 学校
+        PdfFormField receptionistName = form.getFormFields().get("Text"+1);
+        receptionistName.setValue(college_name).setColor(color).setFont(font).setFontSize(18);
+        // 姓名
+        receptionistName = form.getFormFields().get("Text"+2);
+        receptionistName.setValue(stu_name).setColor(color).setFont(font).setFontSize(18);
+        // 指导老师
+        receptionistName = form.getFormFields().get("Text"+3);
+        receptionistName.setValue(adviser).setColor(color).setFont(font).setFontSize(18);
+            // 清除表单域
+//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+//        }
+        // 奖项
+        color = new DeviceRgb(128,0,0);
+        font = PdfFontFactory.createFont("public/simkai.ttf");
+        receptionistName = form.getFormFields().get("Text"+4);
+        receptionistName.setValue(award).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(54);
+        form.flattenFields();
+        pdfDocument.close();
+//        for(int i=1; i<7; i++) { // res.length(); 遍历每条信息
+//            DEST = "public/certificate/certificate_" + i + ".pdf";
+//            PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
+//            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+//            DeviceRgb color = new DeviceRgb(31,78,121);
+//            PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
+//            for(int j=1; j<=3; j++) {
+//                PdfFormField receptionistName = form.getFormFields().get("Text"+j);
+//                receptionistName.setValue(res[i][j]).setColor(color).setFont(font).setFontSize(18);
+//                // 清除表单域
+////        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+//            }
+//            // 奖项
+//            color = new DeviceRgb(128,0,0);
+//            font = PdfFontFactory.createFont("public/simkai.ttf");
+//            PdfFormField receptionistName = form.getFormFields().get("Text"+4);
+//            receptionistName.setValue(res[i][4]).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(54);
+//            form.flattenFields();
+//            pdfDocument.close();
+//        }
+        return "1";
     }
     @GetMapping("/fileLoad")
     public String fileLoad() {
@@ -102,7 +132,10 @@ public class fileController {
                     // 获取得到字符串
                     res[i][index] = cell.getStringCellValue();
                     res[i][index] = res[i][index].replace("、", " ");
-                    System.out.println(res[i][index]);
+//                    System.out.println(res[i][index]);
+                    if(index==0) {
+
+                    }
                 }
             }
         } catch (Exception e) {
