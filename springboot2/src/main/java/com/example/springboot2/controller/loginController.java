@@ -2,12 +2,7 @@ package com.example.springboot2.controller;
 
 import com.example.springboot2.ApiResult;
 import com.example.springboot2.SQL;
-import org.jodconverter.office.utils.Lo;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 
 import java.sql.*;
@@ -32,6 +27,30 @@ public class loginController {
     }
 }
 class Login {
+
+
     String username;
     String password;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public String getUsername() {
+        return username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    @Override
+    public String toString() {
+        return "Login{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
+
+
+
 }
