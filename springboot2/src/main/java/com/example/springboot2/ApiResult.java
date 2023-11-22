@@ -25,7 +25,7 @@ public class ApiResult {
         Map<String, Object> output = new HashMap<>();
         output.put("code", code);
         output.put("data", data);
-        output.put("message", msg[code]);
+        output.put("msg", msg[code]);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
