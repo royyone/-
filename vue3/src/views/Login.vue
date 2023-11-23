@@ -36,6 +36,7 @@ export default {
       })
       .then( res => {
         console.log(res.data);
+        this.$router.push('/Home')
       })
       .catch(error => {
         console.log('error!')

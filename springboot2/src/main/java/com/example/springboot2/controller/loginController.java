@@ -19,18 +19,18 @@ public class loginController {
         Map<String, String> data = new HashMap<>();
         String msg[] = new String[]{"登录失败", "登录成功"};
 
-        ResultSet res = SQL.op("select * from users where user_name = '"+login.username+"' and user_pwd = '"+login.password+"'");
+        ResultSet res = SQL.op("select * from users where user_name = '"+login.getUsername()+"' and user_pwd = '"+login.getPassword()+"'");
         if(res.next()) code = 1;
         else code = 0;
-        System.out.println(login.username + "\n" + login.password);
+        System.out.println(login.getUsername() + "\n" + login.getPassword());
         return ApiResult.getApiResult(code, data, msg);
     }
 }
 class Login {
 
 
-    String username;
-    String password;
+    private String username;
+    private String password;
     public void setUsername(String username) {
         this.username = username;
     }
