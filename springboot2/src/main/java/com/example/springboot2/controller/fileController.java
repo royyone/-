@@ -1,6 +1,8 @@
 package com.example.springboot2.controller;
 
-import com.example.springboot2.ApiResult;
+
+import cn.hutool.core.io.FileUtil;
+import com.example.springboot2.Result;
 import com.example.springboot2.SQL;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -10,17 +12,22 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,7 +39,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/fileController")
 public class fileController {
+    @Value("${ip:localhost}")
+    String ip;
+    @Value("${server.port:8081}")
+    String port;
     private String res[][] = new String[10100][20];
+    private final String ROOT_PATH = System.getProperty("user.dir") + File.separator + "public/certificate";
     // 常量
     @PostMapping("/fileHandle")
     public String Summary(@RequestParam("excelFile") MultipartFile excelFile) throws IOException {
@@ -41,17 +53,25 @@ public class fileController {
         // 声明pdf生成类
         return "win!!!";
     }
-
-    @PostMapping("/certificateCreate")
-    public String Create(@RequestBody Certificate certificate) throws IOException, SQLException {
-//        System.out.println(status);
+    @PostMapping("/certificateCreate1")
+    public Result Create1(@RequestBody Certificate certificate) throws IOException, SQLException{
         String TEMP_PATH = "public/Demo3.pdf";
-        if(certificate.getStatus().equals(0)) {
-            TEMP_PATH = "public/Demo2.pdf";
-        }
+        certificate.setStatus(1);
+        return this.Create(TEMP_PATH, certificate);
+    }
+    @PostMapping("/certificateCreate2")
+    public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
+        String TEMP_PATH = "public/Demo2.pdf";
+        certificate.setStatus(2);
+        return this.Create(TEMP_PATH, certificate);
+    }
+    public Result Create(String TEMP_PATH, Certificate certificate) throws IOException, SQLException {
+//        System.out.println(status);
+
         String DEST;
         DEST = "public/certificate/certificate_" + certificate.getId() + ".pdf";
-        certificate.setFile_path(DEST);
+        String temp = "certificate_" + certificate.getId() + ".pdf";
+        certificate.setFile_path(temp);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
         DeviceRgb color = new DeviceRgb(31,78,121);
@@ -79,10 +99,15 @@ public class fileController {
         // 在数据库中修改文件地址
         Connection connection = DriverManager.getConnection(SQL.url, SQL.user, SQL.password);
         PreparedStatement statement = connection.prepareStatement("UPDATE result SET file_path = ? WHERE id = ?");
-        System.out.println(certificate.getFile_path());
-        System.out.println(certificate.getId());
+//        System.out.println(certificate.getFile_path());
+//        System.out.println(certificate.getId());
         // 设置要更新的列的值
         statement.setString(1, certificate.getFile_path()); // 设置第一个问号的值为新值
+        statement.setInt(2, certificate.getId()); // 设置第二个问号的值为指定的记录的ID
+        statement.executeUpdate();
+
+        statement = connection.prepareStatement("UPDATE result SET status = ? WHERE id = ?");
+        statement.setInt(1, certificate.getStatus()); // 设置第1个问号的值为status
         statement.setInt(2, certificate.getId()); // 设置第二个问号的值为指定的记录的ID
         statement.executeUpdate();
         statement.close();
@@ -107,25 +132,8 @@ public class fileController {
 //            form.flattenFields();
 //            pdfDocument.close();
 //        }
-        String msg[] = {"奖状生成成功", "奖状生成失败"};
-        return ApiResult.getApiResult(0, null, msg);
+        return Result.success();
     }
-    @GetMapping("/fileLoad")
-    public String fileLoad() {
-        int code = 1;
-        String msg[] = new String[]{"路径查找失败", "路径查找成功"};
-        Map<String, Map<String, String> > res = new HashMap<>();
-        for(int i=0; i<2; i++) {
-            Map<String, String> temp = new HashMap<>();
-            temp.put("url", "public/ppttest1027/ppttest"+i+".pptx");
-            // 查询数据库确定文件是否已盖章
-            temp.put("fileName", "ppttest"+i+".pptx");
-            temp.put("seal", "0");
-            res.put(""+i, temp);
-        }
-        return ApiResult.getApiResult(code, res, msg);
-    }
-
     public void excelHandle (MultipartFile input){
         try {
 
@@ -174,166 +182,43 @@ public class fileController {
         }
 
     }
+    // todo 下载链接
 
-    @GetMapping("/downloadFile")
-    public void downloadFile(HttpServletResponse response) {
-        // 读取resource目下文件
-        String templatePath =  "classpath:public/1.txt";
-        String filename = " 1.txt ";
-
-        File file = null;
-        Logger log = null;
-        try {
-            file = ResourceUtils.getFile(templatePath);
-        } catch (FileNotFoundException e) {
-            log.warn("文件不存在 {}", filename);
-            // todo, 可以在流中返回“文件不存在“，这样用户可以下载到文件，但是内容为”文件不存在”
-            return;
-        }
-
-        if (file.isFile()) {
-            byte[] fileNameBytes = filename.getBytes(StandardCharsets.UTF_8);
-            filename = new String(fileNameBytes, 0, fileNameBytes.length, StandardCharsets.ISO_8859_1);
-
-            response.reset();
-            response.setContentType("application/force-download");
-            response.setCharacterEncoding("utf-8");
-            response.setContentLength((int) file.length());
-            response.setHeader("Content-Disposition", "attachment;filename=" + filename);
-
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-                byte[] buff = new byte[1024];
-                OutputStream os = response.getOutputStream();
-                int i;
-                while ((i = bis.read(buff)) != -1) {
-                    os.write(buff, 0, i);
-                    os.flush();
-                }
-            } catch (IOException e) {
-                log.error("下载出错 {}，错误原因 {}", filename, e.getMessage());
-            }
-        } else {
-            log.warn("文件不存在 {}", filename);
-            // todo, 可以在流中返回“文件不存在“，这样用户可以下载到文件，但是内容为”文件不存在”
-        }
+    @GetMapping("/downloadFile/{filename}")
+    public Result downloadFile(@PathVariable String filename, HttpServletResponse response) throws IOException {
+        response.addHeader("Content-Disposition", "attachment; finalname=" + URLEncoder.encode(filename, "UTF-8"));
+        return load(filename, response);
     }
+    @GetMapping("/preview/{filename}")
+    public Result preview(@PathVariable String filename, HttpServletResponse response) throws IOException {
+        return load(filename, response);
+    }
+    public Result load(String filename, HttpServletResponse response) throws IOException {
+        String filePath = ROOT_PATH + File.separator + filename;
+        byte[] bytes = FileUtil.readBytes(filePath);
+        ServletOutputStream outputStream = response.getOutputStream();
+        outputStream.write(bytes); // 字节数组
+        outputStream.flush();
+        outputStream.close();
+        return Result.success();
+    }
+//    @PostMapping("/test")
+//    public String dd() {
+//        return ROOT_PATH;
+//    }
 
 }
+@Data
 class Certificate {
-    Integer id;
-    String match_name;
-    String school_name;
-    String college_Name;
-    String stu_name;
-    String team_name;
-    String award;
-    String status;
-    String file_path;
-    String adviser;
-    String isSelect;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getMatch_name() {
-        return match_name;
-    }
-
-    public String getSchool_name() {
-        return school_name;
-    }
-
-    public String getCollege_Name() {
-        return college_Name;
-    }
-
-    public String getStu_name() {
-        return stu_name;
-    }
-
-    public String getTeam_name() {
-        return team_name;
-    }
-
-    public String getAward() {
-        return award;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getFile_path() {
-        return file_path;
-    }
-
-    public String getAdviser() {
-        return adviser;
-    }
-
-    public String getIsSelect() {
-        return isSelect;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setMatch_name(String match_name) {
-        this.match_name = match_name;
-    }
-
-    public void setSchool_name(String school_name) {
-        this.school_name = school_name;
-    }
-
-    public void setCollege_Name(String college_Name) {
-        this.college_Name = college_Name;
-    }
-
-    public void setStu_name(String stu_name) {
-        this.stu_name = stu_name;
-    }
-
-    public void setTeam_name(String team_name) {
-        this.team_name = team_name;
-    }
-
-    public void setAward(String award) {
-        this.award = award;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setFile_path(String file_path) {
-        this.file_path = file_path;
-    }
-
-    public void setAdviser(String adviser) {
-        this.adviser = adviser;
-    }
-
-    public void setIsSelect(String isSelect) {
-        this.isSelect = isSelect;
-    }
-
-    @Override
-    public String toString() {
-        return "Certificate{" +
-                "id=" + id +
-                ", match_name='" + match_name + '\'' +
-                ", school_name='" + school_name + '\'' +
-                ", college_Name='" + college_Name + '\'' +
-                ", stu_name='" + stu_name + '\'' +
-                ", team_name='" + team_name + '\'' +
-                ", award='" + award + '\'' +
-                ", status='" + status + '\'' +
-                ", file_path='" + file_path + '\'' +
-                ", adviser='" + adviser + '\'' +
-                ", isSelect='" + isSelect + '\'' +
-                '}';
-    }
+    private Integer id;
+    private String match_name;
+    private String school_name;
+    private String college_Name;
+    private String stu_name;
+    private String team_name;
+    private String award;
+    private Integer status;
+    private String file_path;
+    private String adviser;
+    private String isSelect;
 }

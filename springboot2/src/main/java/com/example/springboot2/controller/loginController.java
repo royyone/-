@@ -1,6 +1,6 @@
 package com.example.springboot2.controller;
 
-import com.example.springboot2.ApiResult;
+import com.example.springboot2.Result;
 import com.example.springboot2.SQL;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 public class loginController {
     @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/loginCheck")
-    public String loginCheck(@RequestBody Login login) throws SQLException {
+    public Result loginCheck(@RequestBody Login login) throws SQLException {
         int code = 0;
         Map<String, String> data = new HashMap<>();
         String msg[] = new String[]{"登录失败", "登录成功"};
@@ -23,7 +23,7 @@ public class loginController {
         if(res.next()) code = 1;
         else code = 0;
         System.out.println(login.getUsername() + "\n" + login.getPassword());
-        return ApiResult.getApiResult(code, data, msg);
+        return Result.success();
     }
 }
 class Login {

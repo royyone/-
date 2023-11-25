@@ -1,6 +1,6 @@
 package com.example.springboot2.controller;
 
-import com.example.springboot2.ApiResult;
+import com.example.springboot2.Result;
 import com.example.springboot2.SQL;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class awardController {
 
     @PostMapping("/awardSelect")
-    public String updateData() throws SQLException {
+    public Result updateData() throws SQLException {
         List<Map<String, Object>> data = new ArrayList<>();
         Connection conn = DriverManager.getConnection(SQL.url, SQL.user, SQL.password);
         Statement stmt = null;
@@ -46,7 +46,7 @@ public class awardController {
         String[] msg = {"获奖信息查询成功", "获奖信息查询失败"};
         stmt.close();
         conn.close();
-        return ApiResult.getApiResult(0, data, msg);
+        return Result.success(data);
     }
 
 }

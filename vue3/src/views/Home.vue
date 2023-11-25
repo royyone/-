@@ -31,13 +31,16 @@
           <span v-else-if="item.status===1"> 未盖章 </span>
           <span v-else> 已盖章 </span>
         </td>
-        <td> <a href="">预览</a></td>
+        <td> <a  @click="preview(item.file_path)" >预览</a></td>
       </tr>
     </tbody>
     </table>
+  </div>
+  <div>
     <input type="checkbox" v-model="isAll"> 全选
-    <button @click="certificateCreate">生成奖状</button>
-    <button @click="certificateCreate">审核盖章</button>
+    <button @click="certificateCreate1()">生成奖状</button>
+    <button @click="certificateCreate2()">审核盖章</button>
+    <button @click="downloadFile">下载</button>
   </div>
   <h1>Home!!!</h1>
 </template>
@@ -65,6 +68,43 @@ export default {
     }
   },
   methods: {
+    preview(url) {
+      console.log(url);
+      if(url === '') {
+        alert("未审核！！！");
+        return ;
+      } 
+      window.open('http://localhost:8081/fileController/preview/'+url);
+    },
+    downloadFile() {
+      if(!this.data.every(item => { 
+        console.log(!item.isSelect ||  item.isSelect === true && item.status !== 0);
+        return !item.isSelect ||  item.isSelect === true && item.status !== 0;  
+      })) {
+        alert("未审核信息无法下载!");
+        return ;
+      }
+      this.data.forEach(item => {
+        // const URL = '/fileController/downloadFile/' + item.file_path;
+        // const URL = '/fileController/downloadFile/certificate_18.pdf';
+        if(item.isSelect === false) return ;
+        console.log(item);
+        window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
+        // axios
+        //   .get(URL, {
+        //     headers: {
+        //       'Content-Disposition': 'attachment'
+        //     }
+        //   })
+        //   .then(res => {
+        //     // console.log(res.data);
+        //   })
+        //   .catch(error => {
+        //     alert("error => downloadFile");
+        //   })
+      })
+      
+    },
     handleFileSelect(event) {
       this.files = event.target.files[0];
     },
@@ -89,7 +129,7 @@ export default {
         .post(URL, {})
         .then((res) => {
           // 处理响应
-          console.log(res.data);
+          // console.log(res.data);
           this.data = res.data.data;
 
         })
@@ -98,30 +138,39 @@ export default {
           alert("!!!");
           // console.log(error.message);
         });
-    }
+    },
+    certificateCreate1() {
+      // console.log("11");
+      // alert("A!");
+      const URL = '/fileController/certificateCreate1';
+      this.certificateCreate(URL);
+    },
+    certificateCreate2() {
+      const URL = '/fileController/certificateCreate2';
+      this.certificateCreate(URL);
+    },
+    certificateCreate(URL) {
+      console.log(URL);
+      this.data.forEach(async item => {
+        if(item.isSelect === false) return ;
+        if(URL.charAt(URL.length - 1) != item.status+1) {
+          alert('冲突！');
+          return ;
+        }
+        console.log(item);
+        await axios
+          .post(URL, item)
+          .then(res => {
+            console.log(res.data.msg);
+          })
+          .catch(error => {
+            alert("bug! certificateCreate");
+          })
+        this.update();
+      })
+    },
   },
-  certificateCreate() {
-    const URL = '/fileController/certificateCreate';
-    this.data.forEach(item => {
-      if(this.checkSelect(item)) {
-        alert('冲突！');
-        return ;
-      }
-      axios
-        .post(URL, item)
-        .then(res => {
-          console.log(res.data.msg);
-        })
-        .catch(error => {
-          alert("bug! certificateCreate");
-        })
-    })
-  },
-  checkSelect(item) {
-    if(item.status === 1 && item.isSelect) {
-      ; // 有bug
-    }
-  }
+  
 }
 </script>
 

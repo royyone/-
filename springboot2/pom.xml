@@ -54,6 +54,19 @@
         </dependency>
 
         <!--    以下为 maven 库扩展-->
+<!--        注解-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+            <scope>provided</scope>
+        </dependency>
+<!--        FileUtil工具包-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
