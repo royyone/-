@@ -1,4 +1,5 @@
 <template>
+  <Header></Header>
    <div class="uploadFile">
     <input type="file" ref="fileInput" multiple @change="handleFileSelect">
     <button @click="uploadFiles">上传文件</button>
@@ -47,7 +48,11 @@
 
 <script>
 import axios from 'axios';
+import Header from '@/components/Header.vue';
 export default {
+  components: {
+    Header
+  },
   data() {
     return {
       files: '',

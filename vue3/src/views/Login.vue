@@ -13,17 +13,22 @@
       <button type="submit" class="login-button">Login</button>
     </form>
   </div>
+  <div id="app">
+    <el-button type="success">Success</el-button>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
 
 export default {
+  
   data() {
     return {
       username: '',
       password: ''
     }
+    
   },
   methods: {
     login() {
