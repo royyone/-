@@ -117,6 +117,9 @@ export default {
       const URL = '/fileController/fileHandle';
       const formData = new FormData();
       formData.append('excelFile', this.files);
+      let data = {"game_id":1};
+      formData.append('certificate', JSON.stringify(data));
+      console.log(typeof(JSON.stringify(data)));
       axios
         .post(URL, formData)
         .then((res) => {
@@ -136,7 +139,10 @@ export default {
           // 处理响应
           // console.log(res.data);
           this.data = res.data.data;
-
+          this.data.forEach(item => {
+            return item.isSelect = false;
+          })
+          console.log(this.data);
         })
         .catch((error) => {
           // 处理错误
@@ -166,10 +172,12 @@ export default {
         await axios
           .post(URL, item)
           .then(res => {
-            console.log(res.data.msg);
+            
+            console.log(res.data);
           })
           .catch(error => {
-            alert("bug! certificateCreate");
+            // alert("bug! certificateCreate");
+            console.log(error);
           })
         this.update();
       })

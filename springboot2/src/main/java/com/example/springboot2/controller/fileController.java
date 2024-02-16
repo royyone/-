@@ -2,8 +2,11 @@ package com.example.springboot2.controller;
 
 
 import cn.hutool.core.io.FileUtil;
+import com.example.springboot2.Dao.awardDao;
 import com.example.springboot2.Result;
 import com.example.springboot2.SQL;
+import com.example.springboot2.pojo.Certificate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -33,6 +36,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 @CrossOrigin(origins = "http://localhost:8080")
@@ -45,32 +49,41 @@ public class fileController {
     String port;
     private String res[][] = new String[10100][20];
     private final String ROOT_PATH = System.getProperty("user.dir") + File.separator + "public/certificate";
-    // 常量
+    // 处理excel文件，添加获奖信息
     @PostMapping("/fileHandle")
-    public String Summary(@RequestParam("excelFile") MultipartFile excelFile) throws IOException {
+    public Result Summary(@RequestPart("excelFile") MultipartFile excelFile,
+                          @RequestPart("certificate") String jsonCertificate) throws IOException {
+        // 字符串转对象
+        ObjectMapper objectMapper = new ObjectMapper();
+        Certificate certificate = objectMapper.readValue(jsonCertificate, Certificate.class);
         // 处理excel文件
-        excelHandle(excelFile);
-        // 声明pdf生成类
-        return "win!!!";
+        excelHandle(excelFile, certificate);
+        return Result.success();
     }
+    //未盖章奖状
     @PostMapping("/certificateCreate1")
     public Result Create1(@RequestBody Certificate certificate) throws IOException, SQLException{
         String TEMP_PATH = "public/Demo3.pdf";
         certificate.setStatus(1);
+        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
+//        return Result.success();
     }
+    // 盖章奖状
     @PostMapping("/certificateCreate2")
     public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
         String TEMP_PATH = "public/Demo2.pdf";
         certificate.setStatus(2);
+        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
     }
     public Result Create(String TEMP_PATH, Certificate certificate) throws IOException, SQLException {
 //        System.out.println(status);
 
         String DEST;
-        DEST = "public/certificate/certificate_" + certificate.getId() + ".pdf";
-        String temp = "certificate_" + certificate.getId() + ".pdf";
+        // 奖状名字在这里改
+        DEST = "public/certificate/certificate_"+ certificate.getAward_id() + ".pdf";
+        String temp = "certificate_" + certificate.getAward_id() + ".pdf";
         certificate.setFile_path(temp);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
@@ -87,9 +100,9 @@ public class fileController {
         receptionistName = form.getFormFields().get("Text"+3);
         receptionistName.setValue(certificate.getAdviser()).setColor(color).setFont(font).setFontSize(18);
             // 清除表单域
-//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 //        }
-        // 奖项
+//         奖项
         color = new DeviceRgb(128,0,0);
         font = PdfFontFactory.createFont("public/simkai.ttf");
         receptionistName = form.getFormFields().get("Text"+4);
@@ -97,21 +110,8 @@ public class fileController {
         form.flattenFields();
         pdfDocument.close();
         // 在数据库中修改文件地址
-        Connection connection = DriverManager.getConnection(SQL.url, SQL.user, SQL.password);
-        PreparedStatement statement = connection.prepareStatement("UPDATE result SET file_path = ? WHERE id = ?");
-//        System.out.println(certificate.getFile_path());
-//        System.out.println(certificate.getId());
-        // 设置要更新的列的值
-        statement.setString(1, certificate.getFile_path()); // 设置第一个问号的值为新值
-        statement.setInt(2, certificate.getId()); // 设置第二个问号的值为指定的记录的ID
-        statement.executeUpdate();
-
-        statement = connection.prepareStatement("UPDATE result SET status = ? WHERE id = ?");
-        statement.setInt(1, certificate.getStatus()); // 设置第1个问号的值为status
-        statement.setInt(2, certificate.getId()); // 设置第二个问号的值为指定的记录的ID
-        statement.executeUpdate();
-        statement.close();
-        connection.close();
+        Integer result = awardDao.updateAward(certificate);
+//
 //        for(int i=1; i<7; i++) { // res.length(); 遍历每条信息
 //            DEST = "public/certificate/certificate_" + i + ".pdf";
 //            PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
@@ -134,7 +134,8 @@ public class fileController {
 //        }
         return Result.success();
     }
-    public void excelHandle (MultipartFile input){
+    public void excelHandle (MultipartFile input,
+                             Certificate certificate){
         try {
 
             XSSFWorkbook workbook = new XSSFWorkbook(input.getInputStream());
@@ -158,24 +159,37 @@ public class fileController {
                     System.out.println(res[i][index]);
 
                 }
-                // 插入数据
-                String sql="INSERT INTO result (school_name, stu_name, adviser, award, status) VALUES (?, ?, ?, ?, ?)";
-                System.out.println("INSERT INTO result (school_name, stu_name, adviser, award) VALUES " +
-                        "("+res[i][0]+", "+res[i][1]+", "+res[i][2]+", "+res[i][3]+")");
-                Connection conn = DriverManager.getConnection(SQL.url, SQL.user, SQL.password);
-                PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1, res[i][1]);  // 设置第一个占位符的值
-                statement.setString(2, res[i][2]);  // 设置第二个占位符的值
-                statement.setString(3, res[i][3]);  // 设置第三个占位符的值
-                statement.setString(4, res[i][4]);  // 设置第四个占位符的值
-                statement.setInt(5, 0);  // 设置第四个占位符的值
-                int rowsInserted = statement.executeUpdate();  // 执行插入操作并获取受影响的行数
-                if (rowsInserted > 0) {
-                    System.out.println("插入成功！");  // 可选：输出插入成功的消息
+                System.out.println(certificate.toString());
+                certificate.setSchool_name(res[i][1]);
+                certificate.setStu_name(res[i][2]);
+                certificate.setAdviser(res[i][3]);
+                certificate.setAward(res[i][4]);
+                Integer result = awardDao.insertAward(certificate);
+                if(result!=1) {
+                    System.out.println("插入出错！\n" +
+                            res[i][1]+" "+res[i][2]+" "+res[i][3]+" "+res[i][4]);
                 }
+                else {
+                    System.out.println("插入数据成功");
+                }
+                // 插入数据
+//                String sql="INSERT INTO award (school_name, stu_name, adviser, award, status) VALUES (?, ?, ?, ?, ?)";
+//                System.out.println("INSERT INTO result (school_name, stu_name, adviser, award) VALUES " +
+//                        "("+res[i][0]+", "+res[i][1]+", "+res[i][2]+", "+res[i][3]+")");
+//                Connection conn = DriverManager.getConnection(SQL.url, SQL.user, SQL.password);
+//                PreparedStatement statement = conn.prepareStatement(sql);
+//                statement.setString(1, );  // 设置第一个占位符的值
+//                statement.setString(2, );  // 设置第二个占位符的值
+//                statement.setString(3, );  // 设置第三个占位符的值
+//                statement.setString(4, );  // 设置第四个占位符的值
+//                statement.setInt(5, 0);  // 设置第四个占位符的值
+//                int rowsInserted = statement.executeUpdate();  // 执行插入操作并获取受影响的行数
+//                if (rowsInserted > 0) {
+//                    System.out.println("插入成功！");  // 可选：输出插入成功的消息
+//                }
 
-                statement.close();  // 关闭语句
-                conn.close();  // 关闭连接
+//                statement.close();  // 关闭语句
+//                conn.close();  // 关闭连接
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -208,17 +222,4 @@ public class fileController {
 //    }
 
 }
-@Data
-class Certificate {
-    private Integer id;
-    private String match_name;
-    private String school_name;
-    private String college_Name;
-    private String stu_name;
-    private String team_name;
-    private String award;
-    private Integer status;
-    private String file_path;
-    private String adviser;
-    private String isSelect;
-}
+

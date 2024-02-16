@@ -21,5 +21,6 @@
     <mappers>
         <mapper resource="mappers/gameMapper.xml"/>
         <mapper resource="mappers/loginMapper.xml"/>
+        <mapper resource="mappers/awardMapper.xml"/>
     </mappers>
 </configuration>
