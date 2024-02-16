@@ -1,14 +1,24 @@
 <template>
     <el-row><el-button round @click="Create">创建</el-button></el-row>
-    <el-table :data="tableData" style="width: 100%" height="250">
-      <el-table-column fixed prop="date" label="" width="150" ><el-button plain>查看</el-button></el-table-column>
-      <el-table-column prop="Level" label="类别" width="120" />
-      <el-table-column prop="Level" label="级别" width="120" />
-      <el-table-column prop="Time" label="时间" width="120" />
-      <el-table-column prop="Name" label="名称" width="320" />
-      <el-table-column prop="Author" label="创建人" width="300" />
-      <el-table-column prop="State" label="状态" width="120" />
-      <el-table-column label="" width="150" ><el-button plain>删除</el-button></el-table-column>
+    <el-table :data="tableData" style="width: 100%" height="750">
+      <!-- <template slot-scope="scope"> -->
+        <el-table-column fixed label="" width="150" >
+          <template #default="{row,$index}">
+            <el-button plain @click="detail(row.game_id)">查看</el-button>
+          </template></el-table-column>
+        <el-table-column prop="game_type" label="类别" width="120" />
+        <el-table-column prop="game_level" label="级别" width="120" />
+        <el-table-column prop="game_date" label="时间" width="120" />
+        <el-table-column prop="game_name" label="名称" width="320" />
+        <el-table-column prop="game_author" label="创建人" width="300" />
+        <el-table-column prop="game_state" label="状态" width="120" />
+        <el-table-column label="" width="150" >
+          <template #default="{row,$index}">
+            <el-button plain @click="Delete(row.game_id)">删除</el-button>
+          </template>
+        </el-table-column>
+      <!-- </template> -->
+      
     </el-table>
     <!-- 创建比赛的弹窗 -->
     <el-dialog :model-value="visible" title="比赛创建" @close="handleClose" :before-close="handleClose">
@@ -17,7 +27,7 @@
         
         <el-form-item label="类别">
           <el-select
-            v-model="formData.Type"
+            v-model="formData.game_type"
             placeholder="一类"
             clearable
           >
@@ -28,7 +38,7 @@
 
         <el-form-item label="级别">
           <el-select
-            v-model="formData.Level"
+            v-model="formData.game_level"
             placeholder="校级"
             clearable
           >
@@ -42,14 +52,14 @@
 
         <el-form-item label="比赛时间">
           <el-date-picker
-            v-model="formData.date"
+            v-model="formData.game_date"
             type="date"
             placeholder="比赛时间"
             clearable
           />
         </el-form-item><br/>
         <el-form-item label="比赛名称">
-          <el-input v-model="formData.gameName" placeholder="" clearable />
+          <el-input v-model="formData.game_name" placeholder="" clearable />
         </el-form-item>
       <!-- <el-form-item>
       <el-button type="primary" @click="onSubmit">Query</el-button>
@@ -68,34 +78,27 @@
 //   Search,
 //   Star,
 // } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
+import axios from 'axios';
 export default {  
   data() {
     return {
       formData: reactive({
-        gameName: '',
-        Level: '',
-        Type: '',
-        date: '',
+        game_name: '',
+        game_evel: '',
+        game_type: '',
+        game_date: '',
       }),
       visible: false,
       tableData: [
-            {
-                date: '2016-05-03',
-                Level: '校级',
-                Time: '2016-05-03',
-                Name: '杭州师范大学程序设计竞赛校赛',
-                Author: '潘志程',
-                State: '已发布',
-            },
         ]
     };
   },
-  methods: {
-    
-    created() {
-      this.update();
+  created() {  
+      this.Update();
     },
+  methods: { 
+    
     // 打开创建比赛的弹窗
     Create() {
       this.visible = true;
@@ -105,27 +108,29 @@ export default {
     },
     // 提交表单增加数据
     submitForm() {
-      if(this.formData.Type='') {
+      this.formData.game_author = '戴泽耀';
+      if(this.formData.game_type==='') {
         alert("添加失败，类别不可为空");
       }
-      else if(this.formData.Level='') {
+      else if(this.formData.game_level==='') {
         alert("添加失败，级别不可为空");
       }
-      else if(this.formData.Time='') {
+      else if(this.formData.game_date==='') {
         alert("添加失败，时间不可为空");
       }
-      else if(this.formData.gameName='') {
+      else if(this.formData.game_name==='') {
         alert("添加失败，名称不可为空");
       }
       else {
-        const URL = '/gameController/gameHandle';
+        const URL = '/gameController/gameInsert';
         axios
           .post(URL, this.formData)
           .then((res) => {
             // 处理响应
-            console.log("添加成功");
+            // console.log("添加成功");
             console.log(res.data);
-            this.update();
+            this.visible = false;
+            this.Update();
           })
           .catch((error) => {
             // 处理错误
@@ -137,18 +142,46 @@ export default {
 
     //调取数据库获得已创建比赛数据
     Update() {
-      
+      const URL = '/gameController/gameSelect';
+      axios
+        .post(URL, {})
+        .then((res) => {
+          // console.log(res.data);
+          this.tableData = res.data.data;
+          console.log(this.tableData);
+        })
+        .catch((error) => {
+          // 处理错误
+          alert("!!!");
+          // console.log(error.message);
+        });
     },
     // 删除此条比赛数据
-    Delete() {
-
+    Delete(id) {
+      // console.log("调用Delete(id)");
+      const URL = '/gameController/gameDelete';
+      axios
+        .post(URL, {
+          game_id: id
+        })
+        .then(({data}) => {
+          console.log(data);
+          this.Update();
+        })
+        .catch((error) => {
+          // alert("Delete BUG!!!");
+          console.log(error);
+        });
     },
     // 进入该条比赛项
-    Option() {
-
+    detail(id) {
+      sessionStorage.setItem("game_id", id);
+      // todo token鉴权
+      this.$router.push('/Home');
     }
   }
 };
+
   
 </script>
 <style scoped>

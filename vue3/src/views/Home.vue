@@ -134,10 +134,13 @@ export default {
     update() {
       const URL = '/awardController/awardSelect';
       axios
-        .post(URL, {})
+        .post(URL, {
+          game_id: sessionStorage.getItem("game_id")
+        })
         .then((res) => {
           // 处理响应
           // console.log(res.data);
+          console.log(sessionStorage.getItem("game_id"));
           this.data = res.data.data;
           this.data.forEach(item => {
             return item.isSelect = false;

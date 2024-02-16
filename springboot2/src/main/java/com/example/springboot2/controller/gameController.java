@@ -21,6 +21,7 @@ public class gameController {
     @PostMapping("/gameInsert")
     public Result insertData(@RequestBody Game game) throws IOException {
         Integer res = gameDao.insertGame(game);
+        System.out.println(game.toString());
         if(res.equals(1)) {
             return Result.success();
         }

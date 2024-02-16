@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     login() {
-      console.log("111");
+      // console.log("111");
       let URL = '/loginController/loginCheck';
       axios
       .post(URL, {
@@ -41,7 +41,7 @@ export default {
       })
       .then( res => {
         console.log(res.data);
-        this.$router.push('/Home')
+        this.$router.push('/First')
       })
       .catch(error => {
         console.log('error!')
