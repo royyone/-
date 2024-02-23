@@ -7,7 +7,6 @@ package com.example.springboot2.controller;
 
 import com.example.springboot2.Dao.gameDao;
 import com.example.springboot2.Result;
-import com.example.springboot2.SQL;
 import com.example.springboot2.pojo.Game;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/gameController")
 public class gameController {
+    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/gameInsert")
     public Result insertData(@RequestBody Game game) throws IOException {
         Integer res = gameDao.insertGame(game);
@@ -29,7 +29,7 @@ public class gameController {
             return Result.error("gameController/gameInsert BUG！！！");
         }
     }
-
+    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/gameDelete")
     public Result deleteData(@RequestBody Game game) throws IOException {
         Integer res = gameDao.deleteGame(game);
@@ -40,7 +40,7 @@ public class gameController {
             return Result.error("gameController/gameDelete BUG！！！");
         }
     }
-
+    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/gameSelect")
     public Result selectData(@RequestBody Game game) throws IOException {
         List<Game> res = gameDao.selectGame();

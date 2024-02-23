@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class loginDao {
-    public static Integer loginCheck(Login login) throws IOException {
+    public static Login loginCheck(Login login) throws IOException {
         InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
         SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
@@ -24,7 +24,35 @@ public class loginDao {
 
         loginMapper mapper = sqlSession.getMapper(loginMapper.class);
         // 执行sql方法
-        Integer result = mapper.loginCheck(login.getUsername(), login.getPassword());
+        Login result = mapper.loginCheck(login.getUser_name(), login.getUser_pwd());
+
+        sqlSession.close();
+        return result;
+    }
+
+    public static Login getById(Integer id) throws IOException {
+        InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+        loginMapper mapper = sqlSession.getMapper(loginMapper.class);
+        // 执行sql方法
+        Login result = mapper.getById(id);
+
+        sqlSession.close();
+        return result;
+    }
+
+    public static Login getUsername(String username) throws IOException {
+        InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+        loginMapper mapper = sqlSession.getMapper(loginMapper.class);
+        // 执行sql方法
+        Login result = mapper.getUsername(username);
 
         sqlSession.close();
         return result;

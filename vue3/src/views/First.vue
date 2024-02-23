@@ -79,7 +79,7 @@
 //   Star,
 // } from '@element-plus/icons-vue'
 import { reactive, watch } from 'vue'
-import axios from 'axios';
+import request from '@/services/request';
 export default {  
   data() {
     return {
@@ -123,7 +123,7 @@ export default {
       }
       else {
         const URL = '/gameController/gameInsert';
-        axios
+        request
           .post(URL, this.formData)
           .then((res) => {
             // 处理响应
@@ -143,24 +143,30 @@ export default {
     //调取数据库获得已创建比赛数据
     Update() {
       const URL = '/gameController/gameSelect';
-      axios
+      request
         .post(URL, {})
-        .then((res) => {
-          // console.log(res.data);
-          this.tableData = res.data.data;
+        .then( ({ data }) => {
+          console.log(data);
+          if(data.code == 200) {
+            this.tableData = data.data;
+          }
+          else if(data.code == 401) {
+            this.$router.push('/');
+          }
           console.log(this.tableData);
         })
         .catch((error) => {
           // 处理错误
-          alert("!!!");
-          // console.log(error.message);
+          // alert("!!!"); 
+          // console.log()
+          console.log(error);
         });
     },
     // 删除此条比赛数据
     Delete(id) {
       // console.log("调用Delete(id)");
       const URL = '/gameController/gameDelete';
-      axios
+      request
         .post(URL, {
           game_id: id
         })

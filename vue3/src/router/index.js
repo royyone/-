@@ -13,19 +13,40 @@ const routes = [
     component: () => import("../views/Login.vue")
   },
   {
-    path: '/Temp',
-    name: 'Temp',
-    component: () => import("../views/Temp.vue")
-  },
-  {
     path: '/First',
     name: 'First',
-    component: () => import("../views/First.vue")
+    component: () => import("../views/First.vue"),
+    beforeEnter: (to,from,next) => {
+      
+        // 释义：进入主页后，若下一个点击的路由不是Login，并且已登录变量为false，
+        // 则扭送 /login
+        if (to.name !== 'Login' && !sessionStorage.getItem("token")) next('/Login');
+        else next();
+    } 
   },
   {
     path: '/Home',
     name: 'Home',
-    component: () => import("../views/Home.vue")
+    component: () => import("../views/Home.vue"),
+    beforeEnter: (to,from,next) => {
+      
+      // 释义：进入主页后，若下一个点击的路由不是Login，并且已登录变量为false，
+      // 则扭送 /login
+      if (to.name !== 'Login' && !sessionStorage.getItem("token")) next('/Login');
+      else next();
+    } 
+  },
+  {
+    path: '/StuHome',
+    name: 'StuHome',
+    component: () => import("../views/StuHome.vue"),
+    beforeEnter: (to,from,next) => {
+      
+      // 释义：进入主页后，若下一个点击的路由不是Login，并且已登录变量为false，
+      // 则扭送 /login
+      if (to.name !== 'Login' && !sessionStorage.getItem("token")) next('/Login');
+      else next();
+    } 
   },
   {
     path: '/Header',
@@ -38,6 +59,7 @@ const router = createRouter({
     routes,
     history: createWebHistory(process.env.BASE_URL),
 });
+
 
 export default router
 

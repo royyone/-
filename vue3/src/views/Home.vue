@@ -1,54 +1,51 @@
 <template>
   <Header></Header>
+
    <div class="uploadFile">
     <input type="file" ref="fileInput" multiple @change="handleFileSelect">
     <button @click="uploadFiles">上传文件</button>
   </div>
-  <div class="dataTable">
-    <table>
-    <thead>
-      <tr>
-        <th></th>
-        <th>编号</th>
-        <th>学院</th>
-        <th>姓名</th>
-        <th>奖项</th>
-        <th>指导老师</th>
-        <th>队伍名称</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in data" :key="data.id">
-        <td><input type="checkbox" v-model="item.isSelect"></td>
-        <td>{{ index+1 }}</td>
-        <td>{{ item.college_name }}</td>
-        <td>{{ item.stu_name }}</td>
-        <td>{{ item.award }}</td>
-        <td>{{ item.adviser }}</td>
-        <td>{{ item.team_name }}</td>
-        <td> 
-          <span v-if="item.status===0"> 未审核 </span>
-          <span v-else-if="item.status===1"> 未盖章 </span>
-          <span v-else> 已盖章 </span>
-        </td>
-        <td> <a  @click="preview(item.file_path)" >预览</a></td>
-      </tr>
-    </tbody>
-    </table>
-  </div>
-  <div>
-    <input type="checkbox" v-model="isAll"> 全选
-    <button @click="certificateCreate1()">生成奖状</button>
-    <button @click="certificateCreate2()">审核盖章</button>
-    <button @click="downloadFile">下载</button>
-  </div>
-  <h1>Home!!!</h1>
+
+  <el-table 
+      :data="tableData" style="width: 100%" height="650"
+      @selection-change="handleSelectionChange"
+  >
+    <!-- <template slot-scope="scope"> -->
+      <el-table-column type="selection" prop="isSelect" width="55" />
+      <el-table-column prop="college_name" label="学院" width="120" />
+      <el-table-column prop="stu_name" label="姓名" width="150" />
+      <el-table-column prop="award" label="奖项" width="120" />
+      <el-table-column prop="adviser" label="指导老师" width="320" />
+      <el-table-column prop="team_name" label="队伍名称" width="300" />
+      <el-table-column prop="status" label="状态">
+          <template #default="{row,$index}">
+              <span v-if="row.status === 0">未生成</span>
+              <span v-else-if="row.status === 1">未审核</span>
+              <span v-else>已审核</span>
+          </template>
+      </el-table-column>
+      <el-table-column label="" width="150" >
+        <template #default="{row,$index}">
+          <el-button plain @click="preview(row.file_path)">预览</el-button>
+        </template></el-table-column>
+      <!-- <el-table-column label="" width="150" >
+        <template #default="{row,$index}">
+          <el-button plain @click="downloadFile()">下载</el-button>
+        </template>
+      </el-table-column> -->
+    <!-- </template> -->
+  </el-table>
+  <el-button plain @click="certificateCreate1()">生成奖状</el-button>
+  <el-button plain @click="certificateCreate2()">审核盖章</el-button>
+  <el-button plain @click="downloadFile()">下载</el-button>
+  <!-- <button @click="downloadFile">下载</button> -->
+
+
 </template>
 
 <script>
-import axios from 'axios';
 import Header from '@/components/Header.vue';
+import request from '@/services/request';
 export default {
   components: {
     Header
@@ -56,22 +53,23 @@ export default {
   data() {
     return {
       files: '',
-      data: []
+      tableData: [],
+      selectData: []
     };
   },
   created() {
     this.update();
   },
-  computed: {
-    isAll: {
-      get() {
-        return this.data.every(item => item.isSelect)
-      },
-      set(value) {
-        this.data.forEach(item => item.isSelect = value);
-      }
-    }
-  },
+  // computed: {
+  //   isAll: {
+  //     get() {
+  //       return this.tableData.every(item => item.isSelect)
+  //     },
+  //     set(value) {
+  //       this.tableData.forEach(item => item.isSelect = value);
+  //     }
+  //   }
+  // },
   methods: {
     preview(url) {
       console.log(url);
@@ -82,32 +80,20 @@ export default {
       window.open('http://localhost:8081/fileController/preview/'+url);
     },
     downloadFile() {
-      if(!this.data.every(item => { 
-        console.log(!item.isSelect ||  item.isSelect === true && item.status !== 0);
-        return !item.isSelect ||  item.isSelect === true && item.status !== 0;  
+      if(this.selectData.every(item => { 
+        console.log(item.status !== 0);
+        return item.status === 2;  
       })) {
-        alert("未审核信息无法下载!");
-        return ;
+          this.selectData.forEach(item => {
+              // const URL = '/fileController/downloadFile/' + item.file_path;
+              // const URL = '/fileController/downloadFile/certificate_18.pdf';
+              console.log(item);
+              window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
+          })
       }
-      this.data.forEach(item => {
-        // const URL = '/fileController/downloadFile/' + item.file_path;
-        // const URL = '/fileController/downloadFile/certificate_18.pdf';
-        if(item.isSelect === false) return ;
-        console.log(item);
-        window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
-        // axios
-        //   .get(URL, {
-        //     headers: {
-        //       'Content-Disposition': 'attachment'
-        //     }
-        //   })
-        //   .then(res => {
-        //     // console.log(res.data);
-        //   })
-        //   .catch(error => {
-        //     alert("error => downloadFile");
-        //   })
-      })
+      else {
+          alert("存在未审核盖章的学生！！");
+      }
       
     },
     handleFileSelect(event) {
@@ -120,7 +106,7 @@ export default {
       let data = {"game_id":1};
       formData.append('certificate', JSON.stringify(data));
       console.log(typeof(JSON.stringify(data)));
-      axios
+      request
         .post(URL, formData)
         .then((res) => {
           // 处理响应
@@ -131,21 +117,22 @@ export default {
           // 处理错误
         });
     },
-    update() {
+    async update() {
       const URL = '/awardController/awardSelect';
-      axios
+      await request
         .post(URL, {
           game_id: sessionStorage.getItem("game_id")
         })
-        .then((res) => {
+        .then(({data}) => {
           // 处理响应
-          // console.log(res.data);
+          console.log("----!!!---")
+          console.log(data);
           console.log(sessionStorage.getItem("game_id"));
-          this.data = res.data.data;
-          this.data.forEach(item => {
+          this.tableData = data.data;
+          this.tableData.forEach(item => {
             return item.isSelect = false;
           })
-          console.log(this.data);
+          console.log(this.tableData);
         })
         .catch((error) => {
           // 处理错误
@@ -165,60 +152,27 @@ export default {
     },
     certificateCreate(URL) {
       console.log(URL);
-      this.data.forEach(async item => {
-        if(item.isSelect === false) return ;
-        if(URL.charAt(URL.length - 1) != item.status+1) {
-          alert('冲突！');
-          return ;
-        }
-        console.log(item);
-        await axios
+      this.selectData.forEach(async item => {
+        if(((URL.charAt(URL.length - 1) == '1') && (item.status==0)) || ((URL.charAt(URL.length - 1) == '2') && (item.status==1)) ) {/////////////////////////////////
+          await request
           .post(URL, item)
           .then(res => {
-            
             console.log(res.data);
           })
           .catch(error => {
-            // alert("bug! certificateCreate");
+            alert("bug! certificateCreate 请联系管理员");
             console.log(error);
           })
+        }
+        console.log(item);
         this.update();
       })
     },
+      handleSelectionChange(val) {
+          this.selectData = val;
+          // console.log(this.selectData);
+      },
   },
   
 }
 </script>
-
-<style scoped lang="scss">
-.uploadFile {
-  margin-bottom: 20px;
-}
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ccc;
-}
-
-th {
-  background-color: #f2f2f2;
-}
-
-a {
-  text-decoration: none;
-  color: blue;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-h1 {
-  margin-top: 30px;
-}
-</style>

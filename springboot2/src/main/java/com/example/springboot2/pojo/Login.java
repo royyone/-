@@ -9,7 +9,10 @@ import lombok.Data;
 
 @Data
 public class Login {
-    private String username;
-    private String password;
-
+    private Integer user_id;
+    private String user_name;
+    private String user_pwd;
+    private String token;
+    private String truth_name;
+    private Integer isadmin;
 }

@@ -20,31 +20,44 @@
 
 <script>
 import axios from 'axios';
+import request from '../services/request.js';
 
 export default {
   
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      isadmin: 0,
+      truth_name: ''
     }
     
   },
   methods: {
     login() {
       // console.log("111");
-      let URL = '/loginController/loginCheck';
+      let URL = 'http://localhost:8081/loginController/loginCheck';
       axios
       .post(URL, {
-        'username': this.username,
-        'password': this.password
+        'user_name': this.username,
+        'user_pwd': this.password
       })
-      .then( res => {
-        console.log(res.data);
-        this.$router.push('/First')
+      .then( ({data}) => {
+        if( data.code == 200 ) {
+          console.log(data.data);
+          sessionStorage.setItem("token", data.data["token"]);
+          sessionStorage.setItem("isadmin", data.data["isadmin"]); 
+          sessionStorage.setItem("truth_name", data.data["truth_name"]); 
+          if(sessionStorage.getItem("isadmin") === "1") this.$router.push('/First')
+          else this.$router.push('/StuHome');
+        }
+        else {
+          //todo 密码错误交互;
+        }
       })
       .catch(error => {
-        console.log('error!')
+        console.log(error);
+        alert("Login BUG! 请联系管理员");
       });
     }
   }

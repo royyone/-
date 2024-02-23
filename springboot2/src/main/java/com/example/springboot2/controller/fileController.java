@@ -4,7 +4,6 @@ package com.example.springboot2.controller;
 import cn.hutool.core.io.FileUtil;
 import com.example.springboot2.Dao.awardDao;
 import com.example.springboot2.Result;
-import com.example.springboot2.SQL;
 import com.example.springboot2.pojo.Certificate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.forms.PdfAcroForm;
@@ -18,27 +17,17 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/fileController")

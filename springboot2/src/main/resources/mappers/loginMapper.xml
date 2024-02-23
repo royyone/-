@@ -5,9 +5,24 @@
 <mapper namespace="com.example.springboot2.mapper.loginMapper">
 
     <select id="loginCheck">
-        SELECT COUNT(*)
+        SELECT *
         FROM users
         WHERE user_name = #{username}
         AND user_pwd = #{password}
+        LIMIT 1
+    </select>
+
+    <select id="getById">
+        SELECT *
+        FROM users
+        WHERE user_id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="getUsername">
+        SELECT *
+        FROM users
+        WHERE user_name = #{username}
+        LIMIT 1
     </select>
 </mapper>

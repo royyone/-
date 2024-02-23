@@ -23,8 +23,9 @@
     </update>
     <select id="stuSelect">
         SELECT *
-        FROM award
-        WHERE stu_name like CONCAT('%', #{stu_name}, '%')
-        AND status = 2
+        FROM award t1
+        LEFT JOIN game t2 ON t1.game_id = t2.game_id
+        WHERE t1.stu_name LIKE CONCAT('%', #{stu_name}, '%')
+        AND t1.status = 2;
     </select>
 </mapper>

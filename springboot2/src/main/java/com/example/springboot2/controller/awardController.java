@@ -22,6 +22,7 @@ public class awardController {
     public Result stuData(@RequestBody Certificate certificate) throws IOException {
         List<Certificate> data = awardDao.stuSelect(certificate);
 //        System.out.println(certificate.toString());
+        System.out.println(data.toString());
         return Result.success(data);
     }
 

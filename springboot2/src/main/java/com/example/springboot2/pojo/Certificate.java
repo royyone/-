@@ -7,11 +7,12 @@ package com.example.springboot2.pojo;
 
 import lombok.Data;
 
+import java.sql.Date;
+
 @Data
 public class Certificate {
     private Integer game_id;
     private Integer award_id;
-    private String match_name;
     private String school_name;
     private String college_Name;
     private String stu_name;
@@ -20,5 +21,11 @@ public class Certificate {
     private Integer status;
     private String file_path;
     private String adviser;
+    private String game_type;
+    private String game_level;
+    private Date game_date;
+    private String game_name;
+    private String game_author;
+    private Integer game_state;
 }
 
