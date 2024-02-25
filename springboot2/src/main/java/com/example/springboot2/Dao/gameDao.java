@@ -38,6 +38,7 @@ public class gameDao {
 
         gameMapper mapper = sqlSession.getMapper(gameMapper.class);
         int result = mapper.deleteGame(game.getGame_id());
+        mapper.deleteAward(game.getGame_id());// 在award表中删除对应比赛id的获奖项
 
         sqlSession.close();
         return result;
@@ -51,6 +52,31 @@ public class gameDao {
 
         gameMapper mapper = sqlSession.getMapper(gameMapper.class);
         List<Game> result = mapper.selectGame();
+
+        sqlSession.close();
+        return result;
+    }
+
+    public static Game selectById(Game game) throws IOException {
+        InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+        gameMapper mapper = sqlSession.getMapper(gameMapper.class);
+        Game result = mapper.selectById(game.getGame_id());
+
+        sqlSession.close();
+        return result;
+    }
+    public static Integer updateStatusById(Game game) throws IOException {
+        InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+        gameMapper mapper = sqlSession.getMapper(gameMapper.class);
+        Integer result = mapper.updateStatusById(game.getGame_id());
 
         sqlSession.close();
         return result;

@@ -1,23 +1,43 @@
 <template>
-  <Header></Header>
+  <!-- <Header></Header> -->
 
    <div class="uploadFile">
     <input type="file" ref="fileInput" multiple @change="handleFileSelect">
-    <button @click="uploadFiles">上传文件</button>
+    <!-- <el-upload
+      v-model:file-list="fileList"
+      class="upload-demo"
+      action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+      multiple
+      :on-preview="handlePreview"
+      :on-remove="handleRemove"
+      :before-remove="beforeRemove"
+      :limit="3"
+      :on-exceed="handleExceed"
+    >
+      <el-button type="primary">上传文件</el-button>
+      <template #tip>
+        <div class="el-upload__tip">
+          .xlsx文件
+        </div>
+      </template>
+    </el-upload> -->
+    <el-button plain @click="uploadFiles">上传文件</el-button>
   </div>
 
   <el-table 
-      :data="tableData" style="width: 100%" height="650"
+      :data="tableData" 
+      stripe 
+      style="width: 100%" height="650px"
       @selection-change="handleSelectionChange"
   >
     <!-- <template slot-scope="scope"> -->
       <el-table-column type="selection" prop="isSelect" width="55" />
-      <el-table-column prop="college_name" label="学院" width="120" />
-      <el-table-column prop="stu_name" label="姓名" width="150" />
-      <el-table-column prop="award" label="奖项" width="120" />
-      <el-table-column prop="adviser" label="指导老师" width="320" />
-      <el-table-column prop="team_name" label="队伍名称" width="300" />
-      <el-table-column prop="status" label="状态">
+      <el-table-column prop="college_name" label="学院" width="200" />
+      <el-table-column prop="stu_name" label="姓名" width="300" />
+      <el-table-column prop="award" label="奖项" width="200" />
+      <el-table-column prop="adviser" label="指导老师" width="200" />
+      <!-- <el-table-column prop="team_name" label="队伍名称" width="300" /> -->
+      <el-table-column prop="status" label="状态" width="100">
           <template #default="{row,$index}">
               <span v-if="row.status === 0">未生成</span>
               <span v-else-if="row.status === 1">未审核</span>
@@ -78,6 +98,7 @@ export default {
         return ;
       } 
       window.open('http://localhost:8081/fileController/preview/'+url);
+
     },
     downloadFile() {
       if(this.selectData.every(item => { 
@@ -103,15 +124,21 @@ export default {
       const URL = '/fileController/fileHandle';
       const formData = new FormData();
       formData.append('excelFile', this.files);
-      let data = {"game_id":1};
+      let data = {"game_id": localStorage.getItem("game_id")};
       formData.append('certificate', JSON.stringify(data));
       console.log(typeof(JSON.stringify(data)));
       request
         .post(URL, formData)
-        .then((res) => {
+        .then(({data}) => {
           // 处理响应
-          console.log(res.data);
-          this.update();
+          console.log(data);
+          if(data.code==200) {
+            this.update();
+          }
+          else {
+            alert("该比赛已经导入过数据，无法再次导入");
+          }
+          
         })
         .catch((error) => {
           // 处理错误
@@ -121,13 +148,13 @@ export default {
       const URL = '/awardController/awardSelect';
       await request
         .post(URL, {
-          game_id: sessionStorage.getItem("game_id")
+          game_id: localStorage.getItem("game_id")
         })
         .then(({data}) => {
           // 处理响应
           console.log("----!!!---")
           console.log(data);
-          console.log(sessionStorage.getItem("game_id"));
+          console.log(localStorage.getItem("game_id"));
           this.tableData = data.data;
           this.tableData.forEach(item => {
             return item.isSelect = false;

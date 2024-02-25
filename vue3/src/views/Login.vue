@@ -1,26 +1,34 @@
 <template>
-  <div class="login-container">
-    <h2 class="login-title">Login</h2>
-    <form @submit.prevent="login" class="login-form">
-      <div class="form-group">
-        <label for="username" class="form-label">用户名:<br></label>
-        <input type="text" id="username" v-model="username" class="form-input" />
+  <div class="login-wrap">
+      <!--输入框-->
+      <div class="form-wrapper">
+        <div class="header">
+          证书下载平台
+        </div>
+        <form @submit.prevent="login" class="login-form">
+        <div class="input-wrapper">
+          <div class="border-wrapper">
+            <input type="text" v-model="username" placeholder="用户名" class="border-item" autocomplete="off" />
+          </div>
+          <div class="border-wrapper">
+            <input type="password" v-model="password" placeholder="密码" class="border-item" autocomplete="off" />
+          </div>
+          <div class = "action">
+            <el-button plain class="btn" @click="login">登录</el-button>
+          </div>
+        </div>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="password" class="form-label">密码:<br></label>
-        <input type="password" id="password" v-model="password" class="form-input" />
-      </div>
-      <button type="submit" class="login-button">Login</button>
-    </form>
-  </div>
-  <div id="app">
-    <el-button type="success">Success</el-button>
-  </div>
+    </div>
+    
+      
+     
+      
+    
 </template>
 
 <script>
 import axios from 'axios';
-import request from '../services/request.js';
 
 export default {
   
@@ -45,10 +53,10 @@ export default {
       .then( ({data}) => {
         if( data.code == 200 ) {
           console.log(data.data);
-          sessionStorage.setItem("token", data.data["token"]);
-          sessionStorage.setItem("isadmin", data.data["isadmin"]); 
-          sessionStorage.setItem("truth_name", data.data["truth_name"]); 
-          if(sessionStorage.getItem("isadmin") === "1") this.$router.push('/First')
+          localStorage.setItem("token", data.data["token"]);
+          localStorage.setItem("isadmin", data.data["isadmin"]); 
+          localStorage.setItem("truth_name", data.data["truth_name"]); 
+          if(localStorage.getItem("isadmin") === "1") this.$router.push('/First')
           else this.$router.push('/StuHome');
         }
         else {
@@ -65,48 +73,107 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.login-container {
-  max-width: 300px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-.login-title {
-  text-align: center;
-  margin-bottom: 20px;
-}
 
 .login-form {
   display: flex;
   flex-direction: column;
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-label {
-  font-weight: bold;
-}
-
-.form-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-button {
-  padding: 8px 15px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-button:hover {
-  background-color: #0056b3;
-}
+.login-wrap {
+    height: 820px;
+    font-family: JetBrains Mono Medium;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background-color: #0e92b3; */
+    background: url('../assets/background.jpg');
+    background-size: 100% 100%;
+  }
+   
+  .form-wrapper {
+    width: 300px;
+    background-color: rgba(41, 45, 62, 0.8);
+    color: #fff;
+    border-radius: 2px;
+    padding: 50px;
+  }
+   
+  .form-wrapper .header {
+    text-align: center;
+    font-size: 35px;
+    text-transform: uppercase;
+    line-height: 100px;
+  }
+   
+  .form-wrapper .input-wrapper input {
+    background-color: rgb(41, 45, 62);
+    border: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+  }
+   
+  .form-wrapper .input-wrapper input::placeholder {
+    text-transform: uppercase;
+  }
+   
+  .form-wrapper .input-wrapper .border-wrapper {
+    background-image: linear-gradient(to right, #e8198b, #0eb4dd);
+    width: 100%;
+    height: 50px;
+    margin-bottom: 20px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   
+  .form-wrapper .input-wrapper .border-wrapper .border-item {
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+    border-radius: 30px;
+  }
+   
+  .form-wrapper .action {
+    display: flex;
+    justify-content: center;
+  }
+   
+  .form-wrapper .action .btn {
+    width: 60%;
+    text-transform: uppercase;
+    border: 2px solid #0e92b3;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+   
+  .form-wrapper .action .btn:hover {
+    background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+  }
+   
+  .form-wrapper .icon-wrapper {
+    text-align: center;
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 20px;
+    border-top: 1px dashed rgb(146, 146, 146);
+    padding: 20px;
+  }
+   
+  .form-wrapper .icon-wrapper i {
+    font-size: 20px;
+    color: rgb(187, 187, 187);
+    cursor: pointer;
+    border: 1px solid #fff;
+    padding: 5px;
+    border-radius: 20px;
+  }
+   
+  .form-wrapper .icon-wrapper i:hover {
+    background-color: #0e92b3;
+  }
 </style>

@@ -16,8 +16,23 @@
     <delete id="deleteGame">
         DELETE FROM game WHERE game_id = #{game_id}
     </delete>
+    <delete id="deleteAward">
+        DELETE FROM award WHERE game_id = #{game_id}
+    </delete>
     <select id="selectGame">
         SELECT *
         FROM game
     </select>
+<!--    通过比赛id查询所有比赛-->
+    <select id="selectById">
+        SELECT *
+        FROM game
+        WHERE game_id = #{game_id}
+    </select>
+<!--    修改发布状态为1-->
+    <update id="updateStatusById">
+        UPDATE game
+        SET game_status = 1
+        WHERE game_id = #{game_id}
+    </update>
 </mapper>

@@ -43,7 +43,7 @@ export default {
       const URL = '/awardController/stuSelect';
       request
         .post(URL, {
-            stu_name: sessionStorage.getItem("truth_name")
+            stu_name: localStorage.getItem("truth_name")
         })
         .then( ({ data }) => {
           console.log(data);

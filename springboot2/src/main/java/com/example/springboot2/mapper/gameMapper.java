@@ -13,5 +13,9 @@ public interface gameMapper {
                        String game_author
                        );
     Integer deleteGame(Integer game_id);
+    Integer deleteAward(Integer game_id);
     List<Game> selectGame();
+    Game selectById(Integer game_id);
+
+    Integer updateStatusById(Integer gameId);
 }

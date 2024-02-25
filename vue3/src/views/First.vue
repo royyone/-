@@ -1,6 +1,11 @@
 <template>
     <el-row><el-button round @click="Create">创建</el-button></el-row>
-    <el-table :data="tableData" style="width: 100%" height="750">
+    <el-table 
+      :data="tableData" 
+      stripe 
+      style="width: 100%" height="750">
+
+
       <!-- <template slot-scope="scope"> -->
         <el-table-column fixed label="" width="150" >
           <template #default="{row,$index}">
@@ -8,10 +13,10 @@
           </template></el-table-column>
         <el-table-column prop="game_type" label="类别" width="120" />
         <el-table-column prop="game_level" label="级别" width="120" />
-        <el-table-column prop="game_date" label="时间" width="120" />
         <el-table-column prop="game_name" label="名称" width="320" />
-        <el-table-column prop="game_author" label="创建人" width="300" />
-        <el-table-column prop="game_state" label="状态" width="120" />
+        <el-table-column prop="game_date" label="时间" width="120" />
+        <el-table-column prop="game_author" label="创建人" width="100" />
+        <!-- <el-table-column prop="game_state" label="状态" width="120" /> -->
         <el-table-column label="" width="150" >
           <template #default="{row,$index}">
             <el-button plain @click="Delete(row.game_id)">删除</el-button>
@@ -42,6 +47,7 @@
             placeholder="校级"
             clearable
           >
+            <el-option label="院级" value="院级" />
             <el-option label="校级" value="校级" />
             <el-option label="省级" value="省级" />
             <el-option label="国家级" value="国家级" />
@@ -108,7 +114,7 @@ export default {
     },
     // 提交表单增加数据
     submitForm() {
-      this.formData.game_author = '戴泽耀';
+      this.formData.game_author = localStorage.getItem("truth_name");
       if(this.formData.game_type==='') {
         alert("添加失败，类别不可为空");
       }
@@ -134,9 +140,8 @@ export default {
           })
           .catch((error) => {
             // 处理错误
+            console.log(error);
           });
-          alert("添加成功！");
-          console.log(this.formData);
       }
     },
 
@@ -181,7 +186,7 @@ export default {
     },
     // 进入该条比赛项
     detail(id) {
-      sessionStorage.setItem("game_id", id);
+      localStorage.setItem("game_id", id);
       // todo token鉴权
       this.$router.push('/Home');
     }

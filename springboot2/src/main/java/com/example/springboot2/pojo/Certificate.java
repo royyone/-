@@ -14,7 +14,7 @@ public class Certificate {
     private Integer game_id;
     private Integer award_id;
     private String school_name;
-    private String college_Name;
+    private String college_name;
     private String stu_name;
     private String team_name;
     private String award;
@@ -26,6 +26,6 @@ public class Certificate {
     private Date game_date;
     private String game_name;
     private String game_author;
-    private Integer game_state;
+    private Integer game_status;
 }
 

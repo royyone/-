@@ -25,7 +25,7 @@ public class awardDao {
 
         awardMapper mapper = sqlSession.getMapper(awardMapper.class);
         int result = mapper.insertAward(certificate.getGame_id(), certificate.getSchool_name(),
-                certificate.getCollege_Name(), certificate.getStu_name(), certificate.getTeam_name(),
+                certificate.getCollege_name(), certificate.getStu_name(), certificate.getTeam_name(),
                 certificate.getAward(), certificate.getFile_path(), certificate.getAdviser());
 
         sqlSession.close();

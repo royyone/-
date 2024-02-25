@@ -3,6 +3,8 @@ package com.example.springboot2.controller;
 
 import cn.hutool.core.io.FileUtil;
 import com.example.springboot2.Dao.awardDao;
+import com.example.springboot2.Exception.ExceptionCodeMsg;
+import com.example.springboot2.Exception.ServiceException;
 import com.example.springboot2.Result;
 import com.example.springboot2.pojo.Certificate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +47,9 @@ public class fileController {
         // 字符串转对象
         ObjectMapper objectMapper = new ObjectMapper();
         Certificate certificate = objectMapper.readValue(jsonCertificate, Certificate.class);
+        if(certificate.getGame_status().equals(1)) {
+            return Result.error();
+        }
         // 处理excel文件
         excelHandle(excelFile, certificate);
         return Result.success();
@@ -79,14 +84,18 @@ public class fileController {
         DeviceRgb color = new DeviceRgb(31,78,121);
         PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
 //        for(int j=1; j<=3; j++) {
-        // 学校
+        // 学院
+
         PdfFormField receptionistName = form.getFormFields().get("Text"+1);
-        receptionistName.setValue(certificate.getCollege_Name()).setColor(color).setFont(font).setFontSize(18);
+        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
+        receptionistName.setValue(certificate.getCollege_name()).setColor(color).setFont(font).setFontSize(18);
         // 姓名
         receptionistName = form.getFormFields().get("Text"+2);
+        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
         receptionistName.setValue(certificate.getStu_name()).setColor(color).setFont(font).setFontSize(18);
         // 指导老师
         receptionistName = form.getFormFields().get("Text"+3);
+        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
         receptionistName.setValue(certificate.getAdviser()).setColor(color).setFont(font).setFontSize(18);
             // 清除表单域
         receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
@@ -132,7 +141,7 @@ public class fileController {
             Sheet sheet = workbook.getSheetAt(0);
             // sheet.getPhysicalNumberOfRows()获取总的行数
             // 循环读取每一行
-            for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
+            for (int i = 2; i < sheet.getPhysicalNumberOfRows(); i++) {
                 // 循环读取每一个格
                 Row row = sheet.getRow(i);
                 // row.getPhysicalNumberOfCells()获取总的列数
@@ -149,7 +158,7 @@ public class fileController {
 
                 }
                 System.out.println(certificate.toString());
-                certificate.setSchool_name(res[i][1]);
+                certificate.setCollege_name(res[i][1]);
                 certificate.setStu_name(res[i][2]);
                 certificate.setAdviser(res[i][3]);
                 certificate.setAward(res[i][4]);
