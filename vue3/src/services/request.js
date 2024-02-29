@@ -11,7 +11,7 @@ const request = axios.create({
 request.interceptors.request.use(
     config => {
       // 在请求发送之前做一些处理，例如添加 token 等
-      const token = sessionStorage.getItem("token");
+      const token = localStorage.getItem("token");
       config.headers.Authorization = `Bearer ${token}`;
       // console.log(token);
       // console.log('请求拦截前');

@@ -10,6 +10,7 @@ import com.example.springboot2.pojo.Certificate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -47,9 +48,9 @@ public class fileController {
         // 字符串转对象
         ObjectMapper objectMapper = new ObjectMapper();
         Certificate certificate = objectMapper.readValue(jsonCertificate, Certificate.class);
-        if(certificate.getGame_status().equals(1)) {
-            return Result.error();
-        }
+//        if(certificate.getGame_status().equals(1)) {
+//            return Result.error();
+//        }
         // 处理excel文件
         excelHandle(excelFile, certificate);
         return Result.success();
@@ -84,27 +85,38 @@ public class fileController {
         DeviceRgb color = new DeviceRgb(31,78,121);
         PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
 //        for(int j=1; j<=3; j++) {
-        // 学院
 
+        // 学院
         PdfFormField receptionistName = form.getFormFields().get("Text"+1);
-        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
         receptionistName.setValue(certificate.getCollege_name()).setColor(color).setFont(font).setFontSize(18);
+        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
+
         // 姓名
         receptionistName = form.getFormFields().get("Text"+2);
-        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
         receptionistName.setValue(certificate.getStu_name()).setColor(color).setFont(font).setFontSize(18);
+        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
+
         // 指导老师
         receptionistName = form.getFormFields().get("Text"+3);
-        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
         receptionistName.setValue(certificate.getAdviser()).setColor(color).setFont(font).setFontSize(18);
-            // 清除表单域
-        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
-//        }
-//         奖项
+        receptionistName.setJustification(PdfFormField.ALIGN_LEFT); // 设置左对齐
+
+        //  奖项
         color = new DeviceRgb(128,0,0);
         font = PdfFontFactory.createFont("public/simkai.ttf");
         receptionistName = form.getFormFields().get("Text"+4);
         receptionistName.setValue(certificate.getAward()).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(54);
+        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+
+//        // todo 比赛名称填充
+//        String temp_game = "2024年浙江省第二十届大学生程序设计竞赛";
+//        color = new DeviceRgb(31,78,121);
+//        font = PdfFontFactory.createFont("public/simsun.ttc,0");
+//        receptionistName = form.getFormFields().get("Text"+5);
+//        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
+//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+
+
         form.flattenFields();
         pdfDocument.close();
         // 在数据库中修改文件地址
@@ -170,24 +182,6 @@ public class fileController {
                 else {
                     System.out.println("插入数据成功");
                 }
-                // 插入数据
-//                String sql="INSERT INTO award (school_name, stu_name, adviser, award, status) VALUES (?, ?, ?, ?, ?)";
-//                System.out.println("INSERT INTO result (school_name, stu_name, adviser, award) VALUES " +
-//                        "("+res[i][0]+", "+res[i][1]+", "+res[i][2]+", "+res[i][3]+")");
-//                Connection conn = DriverManager.getConnection(SQL.url, SQL.user, SQL.password);
-//                PreparedStatement statement = conn.prepareStatement(sql);
-//                statement.setString(1, );  // 设置第一个占位符的值
-//                statement.setString(2, );  // 设置第二个占位符的值
-//                statement.setString(3, );  // 设置第三个占位符的值
-//                statement.setString(4, );  // 设置第四个占位符的值
-//                statement.setInt(5, 0);  // 设置第四个占位符的值
-//                int rowsInserted = statement.executeUpdate();  // 执行插入操作并获取受影响的行数
-//                if (rowsInserted > 0) {
-//                    System.out.println("插入成功！");  // 可选：输出插入成功的消息
-//                }
-
-//                statement.close();  // 关闭语句
-//                conn.close();  // 关闭连接
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,7 +193,24 @@ public class fileController {
     @GetMapping("/downloadFile/{filename}")
     public Result downloadFile(@PathVariable String filename, HttpServletResponse response) throws IOException {
         response.addHeader("Content-Disposition", "attachment; finalname=" + URLEncoder.encode(filename, "UTF-8"));
+//        System.out.println(filename);
         return load(filename, response);
+    }
+    // 下载excel模板
+    @GetMapping("/downloadTemplate")
+    public Result downloadFile(HttpServletResponse response) throws IOException {
+        // xsl 文件
+        //response.setContentType("application/vnd.ms-excel");
+        // xlsx 文件
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.addHeader("Content-Disposition", "attachment; finalname=" + URLEncoder.encode("获奖信息模板.xlsx", "UTF-8"));
+        String filePath = System.getProperty("user.dir") + File.separator + "public/template" + File.separator + "获奖信息模板.xlsx";
+        byte[] bytes = FileUtil.readBytes(filePath);
+        ServletOutputStream outputStream = response.getOutputStream();
+        outputStream.write(bytes); // 字节数组
+        outputStream.flush();
+        outputStream.close();
+        return Result.success();
     }
     @GetMapping("/preview/{filename}")
     public Result preview(@PathVariable String filename, HttpServletResponse response) throws IOException {

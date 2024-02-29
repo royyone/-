@@ -1,5 +1,5 @@
 <template>
-    <el-row><el-button round @click="Create">创建</el-button></el-row>
+    <el-row><el-button round @click="handleOpen">创建</el-button></el-row>
     <el-table 
       :data="tableData" 
       stripe 
@@ -86,14 +86,11 @@
 // } from '@element-plus/icons-vue'
 import { reactive, watch } from 'vue'
 import request from '@/services/request';
+import emitter from '@/utils/emitter';
 export default {  
   data() {
     return {
       formData: reactive({
-        game_name: '',
-        game_evel: '',
-        game_type: '',
-        game_date: '',
       }),
       visible: false,
       tableData: [
@@ -104,9 +101,8 @@ export default {
       this.Update();
     },
   methods: { 
-    
     // 打开创建比赛的弹窗
-    Create() {
+    handleOpen() {
       this.visible = true;
     },
     handleClose() {
@@ -131,16 +127,19 @@ export default {
         const URL = '/gameController/gameInsert';
         request
           .post(URL, this.formData)
-          .then((res) => {
-            // 处理响应
-            // console.log("添加成功");
-            console.log(res.data);
+          .then(({data}) => {
             this.visible = false;
-            this.Update();
+            if(data.code == 200) {
+              this.Update();
+            }
+            else {
+              console.log("First submitForm BUG! ");
+              console.log(data);
+            }
           })
           .catch((error) => {
             // 处理错误
-            console.log(error);
+            alert("First submitForm BUG! 请联系管理员");
           });
       }
     },
@@ -158,36 +157,39 @@ export default {
           else if(data.code == 401) {
             this.$router.push('/');
           }
-          console.log(this.tableData);
+          else {
+            console.log(data);
+          }
         })
         .catch((error) => {
-          // 处理错误
-          // alert("!!!"); 
-          // console.log()
-          console.log(error);
+          alert("First Update BUG! 请联系管理员")
         });
     },
     // 删除此条比赛数据
     Delete(id) {
-      // console.log("调用Delete(id)");
       const URL = '/gameController/gameDelete';
       request
         .post(URL, {
           game_id: id
         })
         .then(({data}) => {
-          console.log(data);
+          // console.log(data);
           this.Update();
+          if(data.code == 200) {
+            this.Update();
+          }
+          else {
+            console.log("First Delete BUG!");
+            console.log(data);
+          }
         })
         .catch((error) => {
-          // alert("Delete BUG!!!");
-          console.log(error);
+          alert("First Delete BUG! 请联系管理员");
         });
     },
     // 进入该条比赛项
     detail(id) {
       localStorage.setItem("game_id", id);
-      // todo token鉴权
       this.$router.push('/Home');
     }
   }

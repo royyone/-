@@ -1,6 +1,6 @@
 <template>
   <!-- <Header></Header> -->
-
+   <el-button plain @click="downloadTemplate">下载模板</el-button>
    <div class="uploadFile">
     <input type="file" ref="fileInput" multiple @change="handleFileSelect">
     <!-- <el-upload
@@ -48,17 +48,10 @@
         <template #default="{row,$index}">
           <el-button plain @click="preview(row.file_path)">预览</el-button>
         </template></el-table-column>
-      <!-- <el-table-column label="" width="150" >
-        <template #default="{row,$index}">
-          <el-button plain @click="downloadFile()">下载</el-button>
-        </template>
-      </el-table-column> -->
-    <!-- </template> -->
   </el-table>
   <el-button plain @click="certificateCreate1()">生成奖状</el-button>
   <el-button plain @click="certificateCreate2()">审核盖章</el-button>
   <el-button plain @click="downloadFile()">下载</el-button>
-  <!-- <button @click="downloadFile">下载</button> -->
 
 
 </template>
@@ -80,19 +73,9 @@ export default {
   created() {
     this.update();
   },
-  // computed: {
-  //   isAll: {
-  //     get() {
-  //       return this.tableData.every(item => item.isSelect)
-  //     },
-  //     set(value) {
-  //       this.tableData.forEach(item => item.isSelect = value);
-  //     }
-  //   }
-  // },
   methods: {
     preview(url) {
-      console.log(url);
+      // console.log(url);
       if(url === '') {
         alert("未审核！！！");
         return ;
@@ -106,8 +89,6 @@ export default {
         return item.status === 2;  
       })) {
           this.selectData.forEach(item => {
-              // const URL = '/fileController/downloadFile/' + item.file_path;
-              // const URL = '/fileController/downloadFile/certificate_18.pdf';
               console.log(item);
               window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
           })
@@ -115,7 +96,10 @@ export default {
       else {
           alert("存在未审核盖章的学生！！");
       }
-      
+    },
+    downloadTemplate() {
+      window.open('http://localhost:8081/fileController/downloadTemplate');
+
     },
     handleFileSelect(event) {
       this.files = event.target.files[0];
@@ -195,8 +179,8 @@ export default {
         this.update();
       })
     },
-      handleSelectionChange(val) {
-          this.selectData = val;
+      handleSelectionChange(value) {
+          this.selectData = value;
           // console.log(this.selectData);
       },
   },

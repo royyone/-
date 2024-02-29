@@ -20,7 +20,7 @@ const routes = [
       
         // 释义：进入主页后，若下一个点击的路由不是Login，并且已登录变量为false，
         // 则扭送 /login
-        if (to.name !== 'Login' && !sessionStorage.getItem("token")) next('/Login');
+        if (to.name !== 'Login' && !localStorage.getItem("token")) next('/Login');
         else next();
     } 
   },
@@ -32,7 +32,7 @@ const routes = [
       
       // 释义：进入主页后，若下一个点击的路由不是Login，并且已登录变量为false，
       // 则扭送 /login
-      if (to.name !== 'Login' && !sessionStorage.getItem("token")) next('/Login');
+      if (to.name !== 'Login' && !localStorage.getItem("token")) next('/Login');
       else next();
     } 
   },
@@ -44,7 +44,7 @@ const routes = [
       
       // 释义：进入主页后，若下一个点击的路由不是Login，并且已登录变量为false，
       // 则扭送 /login
-      if (to.name !== 'Login' && !sessionStorage.getItem("token")) next('/Login');
+      if (to.name !== 'Login' && !localStorage.getItem("token")) next('/Login');
       else next();
     } 
   },

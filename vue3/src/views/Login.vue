@@ -1,6 +1,8 @@
 <template>
   <div class="login-wrap">
       <!--输入框-->
+      <!-- <el-button @click="test(username)"> 测试</el-button> -->
+
       <div class="form-wrapper">
         <div class="header">
           证书下载平台
@@ -28,10 +30,10 @@
 </template>
 
 <script>
+import {ref} from 'vue'; 
 import axios from 'axios';
-
+import emitter from '@/utils/emitter'
 export default {
-  
   data() {
     return {
       username: '',
@@ -41,6 +43,18 @@ export default {
     }
     
   },
+  setup() {
+    ;
+    const test = (username) => {
+      console.log("test被执行");
+      console.log("..");
+      
+    };
+    return {
+      test
+    }
+  },
+  
   methods: {
     login() {
       // console.log("111");
@@ -54,13 +68,20 @@ export default {
         if( data.code == 200 ) {
           console.log(data.data);
           localStorage.setItem("token", data.data["token"]);
-          localStorage.setItem("isadmin", data.data["isadmin"]); 
+          // emitter.emit('sendIsAdmin', data.data["isadmin"]);
+          localStorage.setItem("isadmin", data.data["isadmin"]);
+          // console.log(typeof(data.data["isadmin"]));
+          // emitter.emit('sendTruth_Name', data.data["truth_name"]); 
           localStorage.setItem("truth_name", data.data["truth_name"]); 
-          if(localStorage.getItem("isadmin") === "1") this.$router.push('/First')
+
+          // emitter.on('se 
+          if( data.data["isadmin"] === 1 ) this.$router.push('/First');
           else this.$router.push('/StuHome');
         }
         else {
           //todo 密码错误交互;
+          // alert("登录失败，请检查用户名和密码");
+          console.log(data.msg);
         }
       })
       .catch(error => {
