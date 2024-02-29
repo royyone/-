@@ -7,10 +7,12 @@ package com.example.springboot2.controller;
 
 import com.example.springboot2.Dao.gameDao;
 import com.example.springboot2.Result;
+import com.example.springboot2.pojo.Certificate;
 import com.example.springboot2.pojo.Game;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:8080")
@@ -49,6 +51,16 @@ public class gameController {
         }
         else {
             return Result.success(res);
+        }
+    }
+    @PostMapping("/gameLock")
+    public Result gameLock(@RequestBody Game game) throws IOException {
+        Integer result = gameDao.updateStatusById(game.getGame_id());
+        if(result.equals(1)) {
+            return Result.success();
+        }
+        else {
+            return Result.error("gameController/gameSelect BUG！！！");
         }
     }
 }

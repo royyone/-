@@ -3,6 +3,7 @@ package com.example.springboot2.controller;
 
 import cn.hutool.core.io.FileUtil;
 import com.example.springboot2.Dao.awardDao;
+import com.example.springboot2.Dao.gameDao;
 import com.example.springboot2.Exception.ExceptionCodeMsg;
 import com.example.springboot2.Exception.ServiceException;
 import com.example.springboot2.Result;
@@ -48,9 +49,11 @@ public class fileController {
         // 字符串转对象
         ObjectMapper objectMapper = new ObjectMapper();
         Certificate certificate = objectMapper.readValue(jsonCertificate, Certificate.class);
-//        if(certificate.getGame_status().equals(1)) {
-//            return Result.error();
-//        }
+        // 检查编号为id的比赛是否已经导入过数据
+//        System.out.println(gameDao.selectById(certificate.getGame_id()));
+        if(gameDao.selectById(certificate.getGame_id()).getGame_status().equals(1)) {
+            return Result.error("该比赛已经导入过数据，无法再次导入");
+        }
         // 处理excel文件
         excelHandle(excelFile, certificate);
         return Result.success();
@@ -191,14 +194,14 @@ public class fileController {
     // todo 下载链接
 
     @GetMapping("/downloadFile/{filename}")
-    public Result downloadFile(@PathVariable String filename, HttpServletResponse response) throws IOException {
+    public void downloadFile(@PathVariable String filename, HttpServletResponse response) throws IOException {
         response.addHeader("Content-Disposition", "attachment; finalname=" + URLEncoder.encode(filename, "UTF-8"));
 //        System.out.println(filename);
-        return load(filename, response);
+        load(filename, response);
     }
     // 下载excel模板
     @GetMapping("/downloadTemplate")
-    public Result downloadFile(HttpServletResponse response) throws IOException {
+    public void downloadFile(HttpServletResponse response) throws IOException {
         // xsl 文件
         //response.setContentType("application/vnd.ms-excel");
         // xlsx 文件
@@ -210,20 +213,18 @@ public class fileController {
         outputStream.write(bytes); // 字节数组
         outputStream.flush();
         outputStream.close();
-        return Result.success();
     }
     @GetMapping("/preview/{filename}")
-    public Result preview(@PathVariable String filename, HttpServletResponse response) throws IOException {
-        return load(filename, response);
+    public void preview(@PathVariable String filename, HttpServletResponse response) throws IOException {
+        load(filename, response);
     }
-    public Result load(String filename, HttpServletResponse response) throws IOException {
+    public void load(String filename, HttpServletResponse response) throws IOException {
         String filePath = ROOT_PATH + File.separator + filename;
         byte[] bytes = FileUtil.readBytes(filePath);
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(bytes); // 字节数组
         outputStream.flush();
         outputStream.close();
-        return Result.success();
     }
 //    @PostMapping("/test")
 //    public String dd() {

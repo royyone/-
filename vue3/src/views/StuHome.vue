@@ -53,11 +53,13 @@ export default {
           else if(data.code == 401) {
             this.$router.push('/');
           }
-          console.log(this.tableData);
+          else {
+            alert("StuHome Update BUG!");
+            console.log(data);
+          }
         })
         .catch((error) => {
-            console.log(error);
-          alert("stuHome BUG! 请联系管理员");
+          alert("StuHome Update BUG! 请联系管理员");
         });
     },
     // 

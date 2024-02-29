@@ -133,7 +133,7 @@ export default {
               this.Update();
             }
             else {
-              console.log("First submitForm BUG! ");
+              alert("First submitForm BUG! ");
               console.log(data);
             }
           })

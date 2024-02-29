@@ -77,7 +77,7 @@ export default {
     preview(url) {
       // console.log(url);
       if(url === '') {
-        alert("未审核！！！");
+        alert("该学生尚未生成奖状，无法预览");
         return ;
       } 
       window.open('http://localhost:8081/fileController/preview/'+url);
@@ -104,6 +104,25 @@ export default {
     handleFileSelect(event) {
       this.files = event.target.files[0];
     },
+    gameLock(game_id) {
+      const URL = '/gameController/gameLock';
+      request
+        .post(URL, {
+          game_id: game_id
+        })
+        .then(({data}) => {
+          if(data.code == 200) {
+            console.log(data);
+          }
+          else {
+            alert("Home gameLock BUG!");
+            console.log(data);
+          }
+        })
+        .catch( error => {
+          alert("Home gameLock BUG! 请联系管理员");
+        })
+    },
     uploadFiles() {
       const URL = '/fileController/fileHandle';
       const formData = new FormData();
@@ -114,46 +133,47 @@ export default {
       request
         .post(URL, formData)
         .then(({data}) => {
-          // 处理响应
           console.log(data);
-          if(data.code==200) {
+          if(data.code == 200) {
             this.update();
+            this.gameLock(localStorage.getItem("game_id"));
+          }
+          else if(data.code == 501){
+            alert(data.msg);
           }
           else {
-            alert("该比赛已经导入过数据，无法再次导入");
+            alert("Home UploadFiles BUG!");
+            console.log(data);
           }
-          
         })
         .catch((error) => {
-          // 处理错误
+          console.log(error);
+          alert("Home UploadFiles BUG! 请联系管理员");
         });
     },
-    async update() {
+    
+    update() {
       const URL = '/awardController/awardSelect';
-      await request
+      request
         .post(URL, {
           game_id: localStorage.getItem("game_id")
         })
         .then(({data}) => {
-          // 处理响应
-          console.log("----!!!---")
-          console.log(data);
-          console.log(localStorage.getItem("game_id"));
-          this.tableData = data.data;
-          this.tableData.forEach(item => {
-            return item.isSelect = false;
-          })
-          console.log(this.tableData);
+          if(data.code == 200) {
+            this.tableData = data.data;
+            console.log(this.tableData);
+          }
+          else {
+            alert("Home update BUG!");
+            console.log(data);
+          }
+          
         })
         .catch((error) => {
-          // 处理错误
-          alert("!!!");
-          // console.log(error.message);
+          alert("Home update BUG!请联系管理员");
         });
     },
     certificateCreate1() {
-      // console.log("11");
-      // alert("A!");
       const URL = '/fileController/certificateCreate1';
       this.certificateCreate(URL);
     },
@@ -167,15 +187,19 @@ export default {
         if(((URL.charAt(URL.length - 1) == '1') && (item.status==0)) || ((URL.charAt(URL.length - 1) == '2') && (item.status==1)) ) {/////////////////////////////////
           await request
           .post(URL, item)
-          .then(res => {
-            console.log(res.data);
+          .then(({data}) => {
+            // console.log(data);
+            if(data.code == 200) {
+              // alert("添加成功");
+            }
+            else {
+              alert("certificateCreate BUG! ");
+            }
           })
           .catch(error => {
-            alert("bug! certificateCreate 请联系管理员");
-            console.log(error);
+            alert("certificateCreate BUG! 请联系管理员");
           })
         }
-        console.log(item);
         this.update();
       })
     },

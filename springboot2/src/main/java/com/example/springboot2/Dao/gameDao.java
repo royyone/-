@@ -57,26 +57,26 @@ public class gameDao {
         return result;
     }
 
-    public static Game selectById(Game game) throws IOException {
+    public static Game selectById(Integer game_id) throws IOException {
         InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
         SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
         SqlSession sqlSession = sqlSessionFactory.openSession(true);
 
         gameMapper mapper = sqlSession.getMapper(gameMapper.class);
-        Game result = mapper.selectById(game.getGame_id());
+        Game result = mapper.selectById(game_id);
 
         sqlSession.close();
         return result;
     }
-    public static Integer updateStatusById(Game game) throws IOException {
+    public static Integer updateStatusById(Integer game_id) throws IOException {
         InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
         SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
         SqlSession sqlSession = sqlSessionFactory.openSession(true);
 
         gameMapper mapper = sqlSession.getMapper(gameMapper.class);
-        Integer result = mapper.updateStatusById(game.getGame_id());
+        Integer result = mapper.updateStatusById(game_id);
 
         sqlSession.close();
         return result;
