@@ -35,8 +35,28 @@ export default {
     };
   },
   created() {  
-      this.Update();
-    },
+    const URL = "/loginController/studentCheck";
+      request
+      .post(URL)
+      .then( ({data}) => {
+        if(data.code == 200) {
+          console.log(data.msg);
+          this.Update();
+        }
+        else if(data.code == 401) {
+          alert(data.msg);
+          this.$router.push("/");
+        }
+        else {
+          alert("First created BUG!");
+          console.log(data);
+        }
+      }) 
+      .catch( error => {
+        console.log(error);
+        alert("First created BUG! 请联系管理员");
+      })
+  },
   methods: { 
     //调取数据库获得学生比赛获奖数据
     Update() {

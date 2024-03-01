@@ -18,7 +18,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
                 .addPathPatterns("/**")  // 拦截所有请求，通过判断token是否合法来决定是否需要登录
-                .excludePathPatterns("/loginController/loginCheck","/fileController/preview/**","/fileController/downloadFile/**"
+                .excludePathPatterns("/loginController/loginCheck","/fileController/preview/**"
+                        ,"/fileController/downloadFile/**"
                 ,"/fileController/downloadTemplate");
 //                .excludePathPatterns("/user/login", "/user/register", "/**/export", "/**/import","/file/**");//排除这些，这些不用验证，直接登录
     }

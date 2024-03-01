@@ -8,4 +8,6 @@ public interface loginMapper {
     Login getById(Integer id);
 
     Login getUsername(String username);
+
+    Login getIsAdmin(String username);
 }

@@ -25,4 +25,12 @@
         WHERE user_name = #{username}
         LIMIT 1
     </select>
+
+<!--    通过username获取isadmin-->
+    <select id="getIsAdmin">
+        SELECT *
+        FROM users
+        WHERE user_name = #{username}
+        LIMIT 1
+    </select>
 </mapper>

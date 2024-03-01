@@ -63,7 +63,7 @@ public class fileController {
     public Result Create1(@RequestBody Certificate certificate) throws IOException, SQLException{
         String TEMP_PATH = "public/Demo3.pdf";
         certificate.setStatus(1);
-        System.out.println(certificate.toString());
+//        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
 //        return Result.success();
     }
@@ -72,7 +72,7 @@ public class fileController {
     public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
         String TEMP_PATH = "public/Demo2.pdf";
         certificate.setStatus(2);
-        System.out.println(certificate.toString());
+//        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
     }
     public Result Create(String TEMP_PATH, Certificate certificate) throws IOException, SQLException {
@@ -216,6 +216,8 @@ public class fileController {
     }
     @GetMapping("/preview/{filename}")
     public void preview(@PathVariable String filename, HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+//        response.addHeader("Content-Disposition", "inline");
         load(filename, response);
     }
     public void load(String filename, HttpServletResponse response) throws IOException {

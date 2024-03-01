@@ -71,7 +71,27 @@ export default {
     };
   },
   created() {
-    this.update();
+    const URL = "/loginController/teacherCheck";
+      request
+      .post(URL)
+      .then( ({data}) => {
+        if(data.code == 200) {
+          console.log(data.msg);
+          this.update();
+        }
+        else if(data.code == 401) {
+          alert(data.msg);
+          this.$router.push("/");
+        }
+        else {
+          alert("Home created BUG!");
+          console.log(data);
+        }
+      }) 
+      .catch( error => {
+        console.log(error);
+        alert("Home created BUG! 请联系管理员");
+      })
   },
   methods: {
     preview(url) {
@@ -80,8 +100,8 @@ export default {
         alert("该学生尚未生成奖状，无法预览");
         return ;
       } 
-      window.open('http://localhost:8081/fileController/preview/'+url);
-
+      const token = localStorage.getItem("token");
+      window.open('http://localhost:8081/fileController/preview/'+url, '_blank');
     },
     downloadFile() {
       if(this.selectData.every(item => { 
@@ -99,7 +119,6 @@ export default {
     },
     downloadTemplate() {
       window.open('http://localhost:8081/fileController/downloadTemplate');
-
     },
     handleFileSelect(event) {
       this.files = event.target.files[0];

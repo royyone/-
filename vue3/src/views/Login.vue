@@ -8,7 +8,7 @@
           证书下载平台
         </div>
         <form @submit.prevent="login" class="login-form">
-        <div class="input-wrapper">
+        <div class="input-wrapper" @keyup.enter="login">
           <div class="border-wrapper">
             <input type="text" v-model="username" placeholder="用户名" class="border-item" autocomplete="off" />
           </div>

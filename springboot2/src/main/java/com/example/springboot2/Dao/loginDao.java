@@ -57,4 +57,18 @@ public class loginDao {
         sqlSession.close();
         return result;
     }
+
+    public static Login getIsAdmin(String username) throws IOException {
+        InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(stream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+
+        loginMapper mapper = sqlSession.getMapper(loginMapper.class);
+        // 执行sql方法
+        Login result = mapper.getIsAdmin(username);
+
+        sqlSession.close();
+        return result;
+    }
 }
