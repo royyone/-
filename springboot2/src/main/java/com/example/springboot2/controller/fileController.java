@@ -4,15 +4,14 @@ package com.example.springboot2.controller;
 import cn.hutool.core.io.FileUtil;
 import com.example.springboot2.Dao.awardDao;
 import com.example.springboot2.Dao.gameDao;
-import com.example.springboot2.Exception.ExceptionCodeMsg;
-import com.example.springboot2.Exception.ServiceException;
+
 import com.example.springboot2.Result;
 import com.example.springboot2.pojo.Certificate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.DeviceRgb;
+
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -70,7 +69,8 @@ public class fileController {
     // 盖章奖状
     @PostMapping("/certificateCreate2")
     public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
-        String TEMP_PATH = "public/Demo2.pdf";
+//        String TEMP_PATH = "public/Demo.pdf";
+        String TEMP_PATH = "public/比赛名称test.pdf";
         certificate.setStatus(2);
 //        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
@@ -112,12 +112,13 @@ public class fileController {
         receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 
 //        // todo 比赛名称填充
-//        String temp_game = "2024年浙江省第二十届大学生程序设计竞赛";
-//        color = new DeviceRgb(31,78,121);
-//        font = PdfFontFactory.createFont("public/simsun.ttc,0");
-//        receptionistName = form.getFormFields().get("Text"+5);
-//        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
-//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+        String temp_game = "2024年浙江省第二十届大学生程序设计竞赛";
+        color = new DeviceRgb(31,78,121);
+        font = PdfFontFactory.createFont("public/simsun.ttc,0");
+
+        receptionistName = form.getFormFields().get("Text"+5);
+        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
+        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 
 
         form.flattenFields();
