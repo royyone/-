@@ -69,8 +69,8 @@ public class fileController {
     // 盖章奖状
     @PostMapping("/certificateCreate2")
     public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
-//        String TEMP_PATH = "public/Demo.pdf";
-        String TEMP_PATH = "public/比赛名称test.pdf";
+        String TEMP_PATH = "public/demo.pdf";
+//        String TEMP_PATH = "public/比赛名称test.pdf";
         certificate.setStatus(2);
 //        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
@@ -112,13 +112,13 @@ public class fileController {
         receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 
 //        // todo 比赛名称填充
-        String temp_game = "2024年浙江省第二十届大学生程序设计竞赛";
-        color = new DeviceRgb(31,78,121);
-        font = PdfFontFactory.createFont("public/simsun.ttc,0");
-
-        receptionistName = form.getFormFields().get("Text"+5);
-        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
-        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+//        String temp_game = "2024年浙江省第二十届大学生程序设计竞赛";
+//        color = new DeviceRgb(31,78,121);
+//        font = PdfFontFactory.createFont("public/simsun.ttc,0");
+//
+//        receptionistName = form.getFormFields().get("Text"+5);
+//        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
+//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 
 
         form.flattenFields();

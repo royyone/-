@@ -49,9 +49,5 @@ request.interceptors.response.use(
   }
 );
   
- 
- 
- 
- 
 // 交出去，共这个项目中的其他组件使用
 export default request;
