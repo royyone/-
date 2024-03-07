@@ -18,4 +18,5 @@ public class Game {
     private String game_name;
     private String game_author;
     private Integer game_status;
+    private String organizer;
 }

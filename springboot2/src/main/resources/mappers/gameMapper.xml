@@ -10,8 +10,8 @@
         2、mapper接口中的方法的方法名要和映射文件中的sqL的id保持一致
     -->
     <insert id="insertGame" >
-        INSERT INTO game (game_type, game_level, game_date, game_name, game_author)
-        VALUES (#{game_type}, #{game_level}, #{game_date}, #{game_name}, #{game_author})
+        INSERT INTO game (game_type, game_level, game_date, game_name, game_author, organizer)
+        VALUES (#{game_type}, #{game_level}, #{game_date}, #{game_name}, #{game_author}, #{organizer})
     </insert>
     <delete id="deleteGame">
         DELETE FROM game WHERE game_id = #{game_id}

@@ -61,8 +61,8 @@
                 localStorage.setItem("truth_name", data.data["truth_name"]); 
     
                 // emitter.on('se 
-                if( data.data["isadmin"] === 1 ) router.push('/First');
-                else router.push('/StuHome');
+                if( data.data["isadmin"] === 0 ) router.push('/StuHome');
+                else router.push('/First');
             }
             else {
                 //todo 密码错误交互;

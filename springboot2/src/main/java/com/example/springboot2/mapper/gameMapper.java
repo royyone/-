@@ -10,7 +10,8 @@ public interface gameMapper {
                        String game_level,
                        Date game_date,
                        String game_name,
-                       String game_author
+                       String game_author,
+                       String organizer
                        );
     Integer deleteGame(Integer game_id);
     Integer deleteAward(Integer game_id);

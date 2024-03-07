@@ -1,6 +1,7 @@
 <template>
     <!-- <Header></Header> -->
     <el-button plain @click="downloadTemplate">下载模板</el-button>
+    <Teleport>111</Teleport>
     <div class="uploadFile">
         <input type="file" ref="fileInput" multiple @change="handleFileSelect">
         <!-- <el-upload
@@ -61,11 +62,15 @@
     import Header from '@/components/Header.vue';
     import request from '@/services/request';
     import { useRouter } from 'vue-router';
+    import {ref} from 'vue';
+    import { ElMessage, ElMessageBox } from 'element-plus'
+// import type { Action } from 'element-plus'
     const router = useRouter();
     let files = ref();
     let tableData = ref([]);
     let selectData = ref([]);
 
+    ElMessageBox.alert('This is a message', 'Title')
     // 页面访问权限
     const URL = "/loginController/teacherCheck";
     request

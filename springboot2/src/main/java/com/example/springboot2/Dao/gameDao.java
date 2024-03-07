@@ -25,7 +25,7 @@ public class gameDao {
 
         gameMapper mapper = sqlSession.getMapper(gameMapper.class);
         int result = mapper.insertGame(game.getGame_type(),
-                game.getGame_type(),game.getGame_date(), game.getGame_name(), game.getGame_author());
+                game.getGame_type(),game.getGame_date(), game.getGame_name(), game.getGame_author(), game.getOrganizer());
 
         sqlSession.close();
         return result;

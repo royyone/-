@@ -1,5 +1,6 @@
 <template>
-    <el-row><el-button round @click="handleOpen">创建</el-button></el-row>
+    <el-row><el-button round @click="handleOpenGame">创建比赛</el-button></el-row>
+    <el-row><el-button round @click="handleOpenCreateUser">创建用户</el-button></el-row>
     <el-table 
         :data="tableData" 
         stripe 
@@ -17,6 +18,7 @@
         <el-table-column prop="game_name" label="名称" width="320" />
         <el-table-column prop="game_date" label="时间" width="120" />
         <el-table-column prop="game_author" label="创建人" width="100" />
+        <el-table-column prop="organizer" label="承办单位" width="200" />
         <el-table-column label="" width="150" >
             <template #default="{row,$index}">
                 <el-button plain @click="Delete(row.game_id)">删除</el-button>
@@ -26,7 +28,7 @@
     </el-table>
 
     <!-- 创建比赛的弹窗 -->
-    <el-dialog :model-value="visible" title="比赛创建" @close="handleClose" :before-close="handleClose">
+    <el-dialog :model-value="visible" title="比赛创建" @close="handleCloseGame" :before-close="handleCloseGame">
 
         <el-form :inline="true" :model="formData" class="demo-form-inline">
       
@@ -67,8 +69,96 @@
         <el-form-item label="比赛名称">
             <el-input v-model="formData.game_name" placeholder="" clearable />
         </el-form-item>
+
+        <el-form-item label="承办单位">
+            <el-select
+                v-model="formData.organizer"
+                placeholder=""
+                clearable
+            >
+            <el-option label="信息科学与技术学院" value="信息科学与技术学院" />
+            <el-option label="人文学院" value="人文学院" />
+            <el-option label="生命与环境科学学院" value="生命与环境科学学院" />
+            <el-option label="音乐学院" value="音乐学院" />
+            <el-option label="美术学院" value="美术学院" />
+            <el-option label="体育学院" value="体育学院" />
+            <el-option label="外国语学院" value="外国语学院" />
+            <el-option label="沈钧儒法学院" value="沈钧儒法学院" />
+            <el-option label="护理学院" value="护理学院" />
+            <el-option label="公共卫生学院" value="公共卫生学院" />
+            <el-option label="基础医学院" value="基础医学院" />
+            <el-option label="材料与化学化工学院" value="材料与化学化工学院" />
+            <el-option label="阿里巴巴商学院" value="阿里巴巴商学院" />
+            <el-option label="药学院" value="药学院" />
+            <el-option label="文化创意与传媒学院" value="文化创意与传媒学院" />
+            <el-option label="数学学院" value="数学学院" />
+            <el-option label="物理学院" value="物理学院" />
+            <el-option label="经济学院" value="经济学院" />
+            <el-option label="经亨颐教育学院" value="经亨颐教育学院" />   
+            <el-option label="哈尔科夫学院" value="哈尔科夫学院" />
+            <el-option label="附属医院（临床医学院、口腔医学院）" value="附属医院（临床医学院、口腔医学院）" />
+            <el-option label="工学院" value="工学院" />
+            <el-option label="基础部" value="基础部" />
+            <el-option label="马克思主义学院" value="马克思主义学院" />
+            <el-option label="国际教育学院" value="国际教育学院" />
+            </el-select>
+        </el-form-item>
         </el-form>
         <el-button type="primary" @click="submitForm()">添加</el-button>
+    </el-dialog>
+    <el-dialog :model-value="visibleCreateUser" title="账号创建" @close="handleCloseCreateUser" :before-close="handleCloseCreateUser">
+        <el-form 
+        :label-position="labelPosition" 
+        label-width="auto"
+        style="max-width: 500px"   
+        :model="formDataUser" class="">
+            <el-form-item label="用户名">
+                <el-input v-model="formDataUser.user_name" placeholder="" clearable />
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-input type="password" v-model="formDataUser.user_pwd" placeholder="" clearable />
+            </el-form-item>
+            <el-form-item label="确认密码">
+                <el-input type="password" v-model="user_pwd2" placeholder="" clearable />
+            </el-form-item>
+            <el-form-item label="姓名">
+                <el-input v-model="formDataUser.truth_name" placeholder="" clearable />
+            </el-form-item>
+            <el-form-item label="所属部门">
+            <el-select
+                v-model="formDataUser.user_college"
+                placeholder=""
+                clearable
+            >
+            <el-option label="信息科学与技术学院" value="信息科学与技术学院" />
+            <el-option label="人文学院" value="人文学院" />
+            <el-option label="生命与环境科学学院" value="生命与环境科学学院" />
+            <el-option label="音乐学院" value="音乐学院" />
+            <el-option label="美术学院" value="美术学院" />
+            <el-option label="体育学院" value="体育学院" />
+            <el-option label="外国语学院" value="外国语学院" />
+            <el-option label="沈钧儒法学院" value="沈钧儒法学院" />
+            <el-option label="护理学院" value="护理学院" />
+            <el-option label="公共卫生学院" value="公共卫生学院" />
+            <el-option label="基础医学院" value="基础医学院" />
+            <el-option label="材料与化学化工学院" value="材料与化学化工学院" />
+            <el-option label="阿里巴巴商学院" value="阿里巴巴商学院" />
+            <el-option label="药学院" value="药学院" />
+            <el-option label="文化创意与传媒学院" value="文化创意与传媒学院" />
+            <el-option label="数学学院" value="数学学院" />
+            <el-option label="物理学院" value="物理学院" />
+            <el-option label="经济学院" value="经济学院" />
+            <el-option label="经亨颐教育学院" value="经亨颐教育学院" />   
+            <el-option label="哈尔科夫学院" value="哈尔科夫学院" />
+            <el-option label="附属医院（临床医学院、口腔医学院）" value="附属医院（临床医学院、口腔医学院）" />
+            <el-option label="工学院" value="工学院" />
+            <el-option label="基础部" value="基础部" />
+            <el-option label="马克思主义学院" value="马克思主义学院" />
+            <el-option label="国际教育学院" value="国际教育学院" />
+            </el-select>
+        </el-form-item>
+            <el-button type="primary" @click="submitFormUser()">添加</el-button>
+        </el-form>
     </el-dialog>
 </template>
 
@@ -76,13 +166,19 @@
     import { ref } from 'vue'
     import request from '@/services/request';
     import emitter from '@/utils/emitter';
+    import { ElMessage, ElMessageBox } from 'element-plus';
     import {useRouter} from 'vue-router';
+
     const router = useRouter();
 
     // 数据
     let formData = ref({});
     let visible = ref(false);
     let tableData = ref([]);
+    let visibleCreateUser = ref(false);
+    let formDataUser = ref({});
+    let user_pwd2 = ref() ; // 用户创建密码校验
+    const labelPosition = ref('right');
 
     // 网页访问权限检查 created
     const URL = "/loginController/teacherCheck";
@@ -110,12 +206,21 @@
     // 方法
 
     // 打开创建比赛的弹窗
-    const handleOpen = () => {
+    const handleOpenGame = () => {
         visible.value = true;
     };
-    const handleClose = () => {
+    const handleCloseGame = () => {
         visible.value = false;
     };
+
+    // 打开创建用户的弹窗
+    const handleOpenCreateUser = () => {
+        visibleCreateUser.value = true;
+    };
+    const handleCloseCreateUser = () => {
+        visibleCreateUser.value = false;
+    };
+
     // 提交表单增加数据
     const submitForm = () => {
         formData.value.game_author = localStorage.getItem("truth_name");
@@ -130,6 +235,9 @@
         }
         else if(formData.value.game_name==='') {
             alert("添加失败，名称不可为空");
+        }
+        else if(formData.value.organizer === '') {
+            alert("添加失败，承办单位不可为空");
         }
         else {
             const URL = '/gameController/gameInsert';
@@ -177,6 +285,10 @@
 
     // 删除此条比赛数据
     const Delete = (id) => {
+        if( localStorage.getItem("isadmin") === '2') {
+            alert("权限不足无法进行删除，请联系管理员");
+            return ;
+        }
         const URL = '/gameController/gameDelete';
         request
         .post(URL, {
@@ -202,6 +314,52 @@
     const detail = (id) => {
         localStorage.setItem("game_id", id);
         router.push('/Home');
+    }
+    // 创建用户
+    const submitFormUser = () => {
+        if( formDataUser.value.user_pwd !== user_pwd2.value) {
+            alert("密码错误请修正！");
+            return ;
+        }
+        visibleCreateUser.value = false;
+        console.log(formDataUser.value);
+        let URL = "userController/userCheck";
+        request
+        .post(URL, formDataUser.value)
+        .then( ({data}) => {
+            if(data.code == 200) {
+                // 嵌套请求创建用户
+                URL = "userController/userCreate";
+                request
+                .post(URL, formDataUser.value)
+                .then( ({ data }) => {
+                    console.log(data);
+                    if(data.code == 200) {
+                        ElMessageBox.alert('用户名：'+formDataUser.value.user_name+'\n'+'密码：'+formDataUser.value.user_pwd, '请注意保存好用户名和密码');
+                    }
+                    else if(data == 501) {
+                        ElMessageBox.alert(data.msg, '');
+                    }
+                    else {
+                        alert("First submitFormUser BUG2!");
+                    }
+                })
+                .catch( ({data}) => {
+                    alert("First submitFormUser BUG2! 请联系管理员");
+                })
+            }
+            else if(data.code == 501) {
+                alert(data.msg);
+            }
+            else {
+                alert("First submitFormUser BUG1!");
+            }
+        })
+        .catch( error => {
+            console.log(error);
+            alert("First submitFormUser BUG1! 请联系管理员");
+        })
+        formDataUser.value = {};
     }
 
 

@@ -43,11 +43,11 @@ public class loginController {
     public Result teacherCheck(HttpServletRequest request) throws IOException {
         String username = JWT.decode(request.getHeader("Authorization").substring(7)).getAudience().get(0);
         Login login = loginDao.getIsAdmin(username);
-        if(login.getIsadmin().equals(1)) {
-            return Result.success("身份验证成功");
+        if(login.getIsadmin().equals(0)) {
+            throw new ServiceException(ExceptionCodeMsg.LOGIN_TOKEN_INVALID);
         }
         else {
-            throw new ServiceException(ExceptionCodeMsg.LOGIN_TOKEN_INVALID);
+            return Result.success("身份验证成功");
         }
 //        return Result.success();
     }

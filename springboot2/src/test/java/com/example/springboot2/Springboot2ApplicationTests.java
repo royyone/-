@@ -38,7 +38,7 @@ class Springboot2ApplicationTests {
         Date date = new Date(2023-11-13);
             gameMapper mapper = sqlSession.getMapper(gameMapper.class);
             // 执行sql方法
-            int result = mapper.insertGame("二类", "校级",date, "潘志程","潘志程");
+            int result = mapper.insertGame("二类", "校级",date, "潘志程","潘志程", "aa");
 
             // 接口重写的底层实现： 通过唯一标识找到sql并执行，唯一标识是namespace.sqlId
             // int result = sqlSession.insert("com.fd.mybatis.mapper.UserMapper.insertUser");

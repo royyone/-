@@ -67,7 +67,8 @@ export default {
     return {
       files: '',
       tableData: [],
-      selectData: []
+      selectData: [],
+
     };
   },
   created() {
@@ -226,6 +227,7 @@ export default {
           this.selectData = value;
           // console.log(this.selectData);
       },
+      
   },
   
 }
