@@ -13,8 +13,9 @@
     </delete>
     <select id="selectAward">
         SELECT *
-        FROM award
-        WHERE game_id = #{game_id};
+        FROM award t1
+        LEFT JOIN game t2 ON t1.game_id = t2.game_id
+        WHERE t1.game_id = #{game_id};
     </select>
     <update id="updateAward">
         UPDATE award

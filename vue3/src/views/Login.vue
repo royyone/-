@@ -61,8 +61,12 @@
                 localStorage.setItem("truth_name", data.data["truth_name"]); 
     
                 // emitter.on('se 
-                if( data.data["isadmin"] === 0 ) router.push('/StuHome');
-                else router.push('/First');
+                if( data.data["isadmin"] === 0 ) {
+                    router.push('/StuHome');
+                }
+                else {
+                    router.push('/First');
+                }
             }
             else {
                 //todo 密码错误交互;
@@ -91,7 +95,7 @@
       align-items: center;
       justify-content: center;
       /* background-color: #0e92b3; */
-      background: url('../assets/background.jpg');
+      background: url('../assets/backg.jpg');
       background-size: 100% 100%;
   }
       

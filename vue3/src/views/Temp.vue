@@ -1,20 +1,19 @@
 <template>
     <!-- <Header></Header> -->
-    <el-button plain @click="downloadTemplate">下载模板</el-button>
-    <Teleport>111</Teleport>
-    <div class="uploadFile">
-        <input type="file" ref="fileInput" multiple @change="handleFileSelect">
-        <!-- <el-upload
+     <el-button plain @click="downloadTemplate">下载模板</el-button>
+     <div class="uploadFile">
+      <input type="file" ref="fileInput" multiple @change="handleFileSelect">
+      <!-- <el-upload
         v-model:file-list="fileList"
-            class="upload-demo"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            multiple
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            :limit="3"
-            :on-exceed="handleExceed"
-        >
+        class="upload-demo"
+        action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+        multiple
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :before-remove="beforeRemove"
+        :limit="3"
+        :on-exceed="handleExceed"
+      >
         <el-button type="primary">上传文件</el-button>
         <template #tip>
           <div class="el-upload__tip">
@@ -22,7 +21,7 @@
           </div>
         </template>
       </el-upload> -->
-        <el-button plain @click="uploadFiles">上传文件</el-button>
+      <el-button plain @click="uploadFiles">上传文件</el-button>
     </div>
   
     <el-table 
@@ -46,10 +45,9 @@
             </template>
         </el-table-column>
         <el-table-column label="" width="150" >
-            <template #default="{row,$index}">
-                <el-button plain @click="preview(row.file_path)">预览</el-button>
-            </template>
-        </el-table-column>
+          <template #default="{row,$index}">
+            <el-button plain @click="preview(row.file_path)">预览</el-button>
+          </template></el-table-column>
     </el-table>
     <el-button plain @click="certificateCreate1()">生成奖状</el-button>
     <el-button plain @click="certificateCreate2()">审核盖章</el-button>
@@ -61,40 +59,37 @@
 <script setup lang = "js">
     import Header from '@/components/Header.vue';
     import request from '@/services/request';
-    import { useRouter } from 'vue-router';
     import {ref} from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus'
-// import type { Action } from 'element-plus'
+    import {useRouter} from'vue-router';
     const router = useRouter();
-    let files = ref();
+    component: { Header };
+
+    let files = ref('');
     let tableData = ref([]);
     let selectData = ref([]);
 
-    ElMessageBox.alert('This is a message', 'Title')
-    // 页面访问权限
     const URL = "/loginController/teacherCheck";
     request
     .post(URL)
     .then( ({data}) => {
-        if(data.code == 200) {
-            console.log(data.msg);
-            update();
-        }
-        else if(data.code == 401) {
-            alert(data.msg);
-            router.push("/");
-        }
-        else {
-            alert("Home created BUG!");
-            console.log(data);
-        }
+    if(data.code == 200) {
+        console.log(data.msg);
+        update();
+    }
+    else if(data.code == 401) {
+        alert(data.msg);
+        router.push("/");
+    }
+    else {
+        alert("Home created BUG!");
+        console.log(data);
+    }
     }) 
     .catch( error => {
         console.log(error);
         alert("Home created BUG! 请联系管理员");
-    })
+    });
 
-    //  方法
     
     const preview = (url) => {
         // console.log(url);
@@ -107,24 +102,27 @@
     };
     const downloadFile = () => {
         if(selectData.value.every(item => { 
-                console.log(item.status !== 0);
-                return item.status === 2;  
-            })) {
-                selectData.value.forEach(item => {
-                    console.log(item);
-                    window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
-                })
+            console.log(item.status !== 0);
+            return item.status === 2;  
+        })) {
+            selectData.value.forEach(item => {
+                console.log(item);
+                window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
+            })
         }
         else {
             alert("存在未审核盖章的学生！！");
         }
     };
+    
     const downloadTemplate = () => {
         window.open('http://localhost:8081/fileController/downloadTemplate');
     };
+
     const handleFileSelect = (event) => {
         files.value = event.target.files[0];
     };
+
     const gameLock = (game_id) => {
         const URL = '/gameController/gameLock';
         request
@@ -144,6 +142,7 @@
             alert("Home gameLock BUG! 请联系管理员");
         })
     };
+
     const uploadFiles = () => {
         const URL = '/fileController/fileHandle';
         const formData = new FormData();
@@ -176,23 +175,23 @@
     const update = () => {
         const URL = '/awardController/awardSelect';
         request
-          .post(URL, {
+        .post(URL, {
             game_id: localStorage.getItem("game_id")
-          })
-          .then(({data}) => {
+        })
+        .then(({data}) => {
             if(data.code == 200) {
-              tableData.value = data.data;
-              console.log(tableData.value);
+                tableData.value = data.data;
+                console.log(tableData.value);
             }
             else {
-              alert("Home update BUG!");
-              console.log(data);
+                alert("Home update BUG!");
+                console.log(data);
             }
             
-          })
-          .catch((error) => {
+        })
+        .catch((error) => {
             alert("Home update BUG!请联系管理员");
-          });
+        });
     };
     const certificateCreate1 = () => {
         const URL = '/fileController/certificateCreate1';
@@ -204,28 +203,29 @@
     };
     const certificateCreate = (URL) => {
         console.log(URL);
-        selectData.value.forEach(async item => {
-          if(((URL.charAt(URL.length - 1) == '1') && (item.status==0)) || ((URL.charAt(URL.length - 1) == '2') && (item.status==1)) ) {/////////////////////////////////
-            await request
+        selectData.value.forEach(item => {
+        if(((URL.charAt(URL.length - 1) == '1') && (item.status==0)) || ((URL.charAt(URL.length - 1) == '2') && (item.status==1)) ) {
+            request
             .post(URL, item)
             .then(({data}) => {
-              // console.log(data);
-              if(data.code == 200) {
-                // alert("添加成功");
-              }
-              else {
-                alert("certificateCreate BUG! ");
-              }
+                // console.log(data);
+                if(data.code == 200) {
+                    // alert("添加成功");
+                }
+                else {
+                    alert("certificateCreate BUG! ");
+                }
             })
             .catch(error => {
-              alert("certificateCreate BUG! 请联系管理员");
+                alert("certificateCreate BUG! 请联系管理员");
             })
-          }
-          update();
+        }
+            update();
         })
     };
     const handleSelectionChange = (value) => {
         selectData.value = value;
-        // console.log(selectData.value);
+
     };
+        
 </script>

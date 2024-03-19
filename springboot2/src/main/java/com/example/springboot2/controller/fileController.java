@@ -30,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -60,7 +62,7 @@ public class fileController {
     //未盖章奖状
     @PostMapping("/certificateCreate1")
     public Result Create1(@RequestBody Certificate certificate) throws IOException, SQLException{
-        String TEMP_PATH = "public/Demo3.pdf";
+        String TEMP_PATH = "public/template/Demo.pdf";
         certificate.setStatus(1);
 //        System.out.println(certificate.toString());
         return this.Create(TEMP_PATH, certificate);
@@ -69,7 +71,7 @@ public class fileController {
     // 盖章奖状
     @PostMapping("/certificateCreate2")
     public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
-        String TEMP_PATH = "public/demo.pdf";
+        String TEMP_PATH = "public/template/demo0319.pdf";
 //        String TEMP_PATH = "public/比赛名称test.pdf";
         certificate.setStatus(2);
 //        System.out.println(certificate.toString());
@@ -112,14 +114,24 @@ public class fileController {
         receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 
 //        // todo 比赛名称填充
-//        String temp_game = "2024年浙江省第二十届大学生程序设计竞赛";
-//        color = new DeviceRgb(31,78,121);
-//        font = PdfFontFactory.createFont("public/simsun.ttc,0");
-//
-//        receptionistName = form.getFormFields().get("Text"+5);
-//        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
-//        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+        String temp_game = "在" + certificate.getGame_name() + "中荣获";
+        color = new DeviceRgb(31,78,121);
+        font = PdfFontFactory.createFont("public/simhei.ttf");
 
+        receptionistName = form.getFormFields().get("Text"+5);
+        receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
+        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
+
+        // todo 右下时间填充
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月", Locale.CHINA);
+        String temp_date = dateFormat.format(certificate.getGame_date()).toUpperCase();
+//        temp_date = this.transDate(temp_date);
+        color = new DeviceRgb(31,78,121);
+        font = PdfFontFactory.createFont("public/simsun.ttc,0");
+
+        receptionistName = form.getFormFields().get("Text"+6);
+        receptionistName.setValue(temp_date).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(18);
+        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
 
         form.flattenFields();
         pdfDocument.close();
@@ -148,6 +160,17 @@ public class fileController {
 //        }
         return Result.success();
     }
+    // todo 将右下角数字日期转换为中文日期的函数
+//    private String transDate(String tempDate) {
+//        String[] digits = {"〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
+//        String res = new String();
+//        for(int i = 0; i < tempDate.length(); i++) {
+//            if(Character.isDigit(tempDate.charAt(i))) {
+//                res+=digits[Integer.parseInt(tempDate.charAt(i))];
+//            }
+//        }
+//    }
+
     public void excelHandle (MultipartFile input,
                              Certificate certificate){
         try {

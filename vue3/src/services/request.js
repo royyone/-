@@ -1,9 +1,10 @@
 import axios from "axios";
  
- 
+// import {getCurrentInstance} from "vue";
+// const { proxy } = getCurrentInstance();
 // 创建 axios 实例
 const request = axios.create({
-    baseURL: 'http://localhost:8081', // 设置基础URL
+    baseURL: 'http://localhost:8081/', // 设置基础URL
     timeout: 5000, // 设置超时时间
   });
  

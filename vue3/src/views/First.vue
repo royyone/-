@@ -10,7 +10,7 @@
         <!-- <template slot-scope="scope"> -->
         <el-table-column fixed label="" width="150" >
             <template #default="{row,$index}">
-                <el-button plain @click="detail(row.game_id)">查看</el-button>
+                <el-button plain @click="detail(row)">查看</el-button>
             </template>
         </el-table-column>
         <el-table-column prop="game_type" label="类别" width="120" />
@@ -170,7 +170,6 @@
     import {useRouter} from 'vue-router';
 
     const router = useRouter();
-
     // 数据
     let formData = ref({});
     let visible = ref(false);
@@ -311,8 +310,10 @@
     };
     
     // 进入该条比赛项
-    const detail = (id) => {
-        localStorage.setItem("game_id", id);
+    const detail = (item) => {
+        localStorage.setItem("game_id", item.game_id);
+        localStorage.setItem("game_name", item.game_name);
+        localStorage.setItem("game_date", item.game_date);
         router.push('/Home');
     }
     // 创建用户
