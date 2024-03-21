@@ -1,10 +1,7 @@
 package com.example.springboot2.mapper;
 
 import com.example.springboot2.pojo.Certificate;
-import com.example.springboot2.pojo.Game;
-import org.springframework.data.relational.core.sql.In;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface awardMapper {

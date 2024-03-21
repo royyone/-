@@ -6,6 +6,9 @@ import 'element-plus/dist/index.css'
 import emitter from './utils/emitter'
  
 
-createApp(App).use(router).use(ElementPlus).mount('#app');
+const app = createApp(App);
+app.use(router).use(ElementPlus);
+
+app.mount('#app');
 
 

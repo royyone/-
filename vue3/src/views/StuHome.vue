@@ -91,12 +91,12 @@
     // 预览文件
     const preview = (url) => {
         console.log(url);
-        window.open('http://localhost:8081/fileController/preview/'+url);
+        window.open(process.env.VUE_APP_BASEURL+'fileController/preview/'+url);
     };
 
     // 下载文件
     const downloadFile = (url) => {
-        window.open('http://localhost:8081/fileController/downloadFile/'+url);
+        window.open(process.env.VUE_APP_BASEURL+'fileController/downloadFile/'+url);
     };
 </script>
 

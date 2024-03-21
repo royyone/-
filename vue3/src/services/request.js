@@ -4,7 +4,7 @@ import axios from "axios";
 // const { proxy } = getCurrentInstance();
 // 创建 axios 实例
 const request = axios.create({
-    baseURL: 'http://localhost:8081/', // 设置基础URL
+    baseURL: process.env.VUE_APP_BASEURL, // 设置基础URL
     timeout: 5000, // 设置超时时间
   });
  

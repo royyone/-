@@ -98,7 +98,7 @@
             return ;
         } 
         const token = localStorage.getItem("token");
-        window.open('http://localhost:8081/fileController/preview/'+url, '_blank');
+        window.open(process.env.VUE_APP_BASEURL+'fileController/preview/'+url, '_blank');
     };
     const downloadFile = () => {
         if(selectData.value.every(item => { 
@@ -107,7 +107,7 @@
         })) {
             selectData.value.forEach(item => {
                 console.log(item);
-                window.open('http://localhost:8081/fileController/downloadFile/'+item.file_path);
+                window.open(process.env.VUE_APP_BASEURL+'fileController/downloadFile/'+item.file_path);
             })
         }
         else {
@@ -116,7 +116,7 @@
     };
     
     const downloadTemplate = () => {
-        window.open('http://localhost:8081/fileController/downloadTemplate');
+        window.open(process.env.VUE_APP_BASEURL+'fileController/downloadTemplate');
     };
 
     const handleFileSelect = (event) => {

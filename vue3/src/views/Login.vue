@@ -44,7 +44,7 @@
 
 
     const login = () => {
-        let URL = 'http://localhost:8081/loginController/loginCheck';
+        let URL = process.env.VUE_APP_BASEURL + "loginController/loginCheck";
         axios
         .post(URL, {
             'user_name': username.value,
