@@ -16,11 +16,10 @@ import java.io.IOException;
 import java.rmi.ServerException;
 import java.rmi.server.ExportException;
 
-@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/loginController")
 public class loginController {
-    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/loginCheck")
     public Result loginCheck(@RequestBody Login login) throws IOException {
 //        System.out.println(login.toString());

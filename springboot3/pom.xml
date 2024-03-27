@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>springboot2</artifactId>
+    <artifactId>springboot3</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springboot2</name>
     <description>springboot2</description>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
 <!--        FileUtil工具包-->

@@ -20,6 +20,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.Data;
 import org.apache.poi.ss.usermodel.*;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,16 +34,37 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin
 @RestController
 @RequestMapping("/fileController")
+@Data
 public class fileController {
-    @Value("${ip:localhost}")
-    String ip;
-    @Value("${server.port:8081}")
-    String port;
+//    @Value("${ip:localhost}")
+//    String ip;
+//    @Value("${server.port:8081}")
+//    String port;
     private String res[][] = new String[10100][20];
-    private final String ROOT_PATH = System.getProperty("user.dir") + File.separator + "public/certificate";
+    // todo 不同环境下修改路径
+    // 本地
+//    private final String ROOT_PATH = System.getProperty("user.dir") + File.separator + "public/certificateFiles";
+//    private final String TEMP_PATH1 = System.getProperty("user.dir") + File.separator + "public/template/demo.pdf";
+//    private final String TEMP_PATH2 = System.getProperty("user.dir") + File.separator + "public/template/demo0319.pdf";
+//    private String DEST;
+//
+//    private  String Simsun = System.getProperty("user.dir") + File.separator + "public/template/simsun.ttc,0";
+//    private String Simkai = System.getProperty("user.dir") + File.separator + "public/template/simkai.ttf";
+//    private String Simhei = System.getProperty("user.dir") + File.separator + "public/template/simhei.ttf";
+//    private String mubanPath = System.getProperty("user.dir") + File.separator + "public/template/获奖信息模板.xlsx";
+    // linux;
+    private final String ROOT_PATH = System.getProperty("user.dir") + File.separator + "public/certificateFiles";
+    private final String TEMP_PATH1 = System.getProperty("user.dir") + File.separator + "public/template/demo.pdf";
+    private final String TEMP_PATH2 = System.getProperty("user.dir") + File.separator + "public/template/demo0319.pdf";
+    private String DEST;
+    private  String Simsun = System.getProperty("user.dir") + File.separator + "public/template/simsun.ttc,0";
+    private String Simkai = System.getProperty("user.dir") + File.separator + "public/template/simkai.ttf";
+    private String Simhei = System.getProperty("user.dir") + File.separator + "public/template/simhei.ttf";
+    private String mubanPath = System.getProperty("user.dir") + File.separator + "public/template/获奖信息模板.xlsx";
     // 处理excel文件，添加获奖信息
     @PostMapping("/fileHandle")
     public Result Summary(@RequestPart("excelFile") MultipartFile excelFile,
@@ -62,33 +84,33 @@ public class fileController {
     //未盖章奖状
     @PostMapping("/certificateCreate1")
     public Result Create1(@RequestBody Certificate certificate) throws IOException, SQLException{
-        String TEMP_PATH = "public/template/Demo.pdf";
+
         certificate.setStatus(1);
 //        System.out.println(certificate.toString());
-        return this.Create(TEMP_PATH, certificate);
+        return this.Create(TEMP_PATH1, certificate);
 //        return Result.success();
     }
     // 盖章奖状
     @PostMapping("/certificateCreate2")
     public Result Create2(@RequestBody Certificate certificate) throws IOException, SQLException{
-        String TEMP_PATH = "public/template/demo0319.pdf";
+
 //        String TEMP_PATH = "public/比赛名称test.pdf";
         certificate.setStatus(2);
 //        System.out.println(certificate.toString());
-        return this.Create(TEMP_PATH, certificate);
+        return this.Create(TEMP_PATH2, certificate);
     }
     public Result Create(String TEMP_PATH, Certificate certificate) throws IOException, SQLException {
 //        System.out.println(status);
 
-        String DEST;
-        // 奖状名字在这里改
-        DEST = "public/certificate/certificate_"+ certificate.getAward_id() + ".pdf";
-        String temp = "certificate_" + certificate.getAward_id() + ".pdf";
+
+        // todo 不同环境下奖状名字在这里改
+        DEST = System.getProperty("user.dir") + File.separator + "public/certificateFiles/" + certificate.getGame_name() + certificate.getStu_name() + certificate.getAward_id() + ".pdf";
+        String temp = certificate.getGame_name() + certificate.getStu_name() + certificate.getAward_id() + ".pdf";
         certificate.setFile_path(temp);
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
         DeviceRgb color = new DeviceRgb(31,78,121);
-        PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
+        PdfFont font = PdfFontFactory.createFont(Simsun);
 //        for(int j=1; j<=3; j++) {
 
         // 学院
@@ -108,7 +130,7 @@ public class fileController {
 
         //  奖项
         color = new DeviceRgb(128,0,0);
-        font = PdfFontFactory.createFont("public/simkai.ttf");
+        font = PdfFontFactory.createFont(Simkai);
         receptionistName = form.getFormFields().get("Text"+4);
         receptionistName.setValue(certificate.getAward()).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(54);
         receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
@@ -116,7 +138,7 @@ public class fileController {
 //        // todo 比赛名称填充
         String temp_game = "在" + certificate.getGame_name() + "中荣获";
         color = new DeviceRgb(31,78,121);
-        font = PdfFontFactory.createFont("public/simhei.ttf");
+        font = PdfFontFactory.createFont(Simhei);
 
         receptionistName = form.getFormFields().get("Text"+5);
         receptionistName.setValue(temp_game).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(20);
@@ -127,7 +149,7 @@ public class fileController {
         String temp_date = dateFormat.format(certificate.getGame_date()).toUpperCase();
 //        temp_date = this.transDate(temp_date);
         color = new DeviceRgb(31,78,121);
-        font = PdfFontFactory.createFont("public/simsun.ttc,0");
+        font = PdfFontFactory.createFont(Simsun);
 
         receptionistName = form.getFormFields().get("Text"+6);
         receptionistName.setValue(temp_date).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(18);
@@ -137,27 +159,7 @@ public class fileController {
         pdfDocument.close();
         // 在数据库中修改文件地址
         Integer result = awardDao.updateAward(certificate);
-//
-//        for(int i=1; i<7; i++) { // res.length(); 遍历每条信息
-//            DEST = "public/certificate/certificate_" + i + ".pdf";
-//            PdfDocument pdfDocument = new PdfDocument(new PdfReader(TEMP_PATH), new PdfWriter(DEST));
-//            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
-//            DeviceRgb color = new DeviceRgb(31,78,121);
-//            PdfFont font = PdfFontFactory.createFont("public/simsun.ttc,0");
-//            for(int j=1; j<=3; j++) {
-//                PdfFormField receptionistName = form.getFormFields().get("Text"+j);
-//                receptionistName.setValue(res[i][j]).setColor(color).setFont(font).setFontSize(18);
-//                // 清除表单域
-////        receptionistName.setJustification(PdfFormField.ALIGN_CENTER); // 设置居中对齐
-//            }
-//            // 奖项
-//            color = new DeviceRgb(128,0,0);
-//            font = PdfFontFactory.createFont("public/simkai.ttf");
-//            PdfFormField receptionistName = form.getFormFields().get("Text"+4);
-//            receptionistName.setValue(res[i][4]).setColor(color).setFont(font).setJustification(PdfFormField.ALIGN_CENTER).setFontSize(54);
-//            form.flattenFields();
-//            pdfDocument.close();
-//        }
+
         return Result.success();
     }
     // todo 将右下角数字日期转换为中文日期的函数
@@ -231,8 +233,8 @@ public class fileController {
         // xlsx 文件
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.addHeader("Content-Disposition", "attachment; finalname=" + URLEncoder.encode("获奖信息模板.xlsx", "UTF-8"));
-        String filePath = System.getProperty("user.dir") + File.separator + "public/template" + File.separator + "获奖信息模板.xlsx";
-        byte[] bytes = FileUtil.readBytes(filePath);
+
+        byte[] bytes = FileUtil.readBytes(mubanPath);
         ServletOutputStream outputStream = response.getOutputStream();
         outputStream.write(bytes); // 字节数组
         outputStream.flush();
@@ -252,10 +254,6 @@ public class fileController {
         outputStream.flush();
         outputStream.close();
     }
-//    @PostMapping("/test")
-//    public String dd() {
-//        return ROOT_PATH;
-//    }
 
 }
 

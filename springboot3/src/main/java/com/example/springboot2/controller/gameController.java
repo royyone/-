@@ -15,11 +15,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin
 @RestController
 @RequestMapping("/gameController")
 public class gameController {
-    @CrossOrigin(origins = "http://localhost:8080")
+
     @PostMapping("/gameInsert")
     public Result insertData(@RequestBody Game game) throws IOException {
         Integer res = gameDao.insertGame(game);
@@ -31,7 +32,7 @@ public class gameController {
             return Result.error("gameController/gameInsert BUG！！！");
         }
     }
-    @CrossOrigin(origins = "http://localhost:8080")
+
     @PostMapping("/gameDelete")
     public Result deleteData(@RequestBody Game game) throws IOException {
         Integer res = gameDao.deleteGame(game);
@@ -42,7 +43,7 @@ public class gameController {
             return Result.error("gameController/gameDelete BUG！！！");
         }
     }
-    @CrossOrigin(origins = "http://localhost:8080")
+
     @PostMapping("/gameSelect")
     public Result selectData(@RequestBody Game game) throws IOException {
         List<Game> res = gameDao.selectGame();
