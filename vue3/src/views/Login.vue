@@ -1,56 +1,104 @@
 <template>
-  <div class="login-wrap">
-      <!--输入框-->
-      <!-- <el-button @click="test(username)"> 测试</el-button> -->
-
-      <div class="form-wrapper">
-        <div class="header">
-          证书下载平台
-        </div>
-        <form @submit.prevent="login" class="login-form">
-        <div class="input-wrapper" @keyup.enter="login">
-          <div class="border-wrapper">
-            <input type="text" v-model="username" placeholder="用户名" class="border-item" autocomplete="off" />
-          </div>
-          <div class="border-wrapper">
-            <input type="password" v-model="password" placeholder="密码" class="border-item" autocomplete="off" />
-          </div>
-          <div class = "action">
-            <el-button plain class="btn" @click="login">登录</el-button>
-          </div>
-        </div>
-        </form>
+    <div class="container">
+      <div class="imgWrap" id="slider">
+        <img class="mainbg" src="https://authserver.hznu.edu.cn/authserver/cumt/static/web/images/bg2.jpg" alt="">
       </div>
-    </div>    
-    
+      <div class="login_container">
+        <div class="item">
+          <div class="active" @click="$router.push('/login')">登录</div>
+          <div @click="$router.push('/login')">注册</div>
+        </div>
+        <div class="login_content">
+          <div>
+            <form :id="login_id" :name="login_name">
+              <div class="number_item">
+                <span class="prex-icon"><img
+                    src="https://authserver.hznu.edu.cn/authserver/cumt/static/web/images/user1.png"
+                    class="login-icon"></span>
+                <input type="text" placeholder="请输入用户账号" v-model="username" @blur="checkUserNum()" />
+              </div>
+              <div class="password_item">
+                <span class="prex-icon"><img
+                    src="https://authserver.hznu.edu.cn/authserver/cumt/static/web/images/pass1.png"
+                    class="login-icon"></span>
+                <input type="password" placeholder="请输入密码" v-model="password" @blur="checkPwdLen()"
+                  @keydown.enter="login()" />
+              </div>
+              <span :class="errors">{{ loginError }}</span>
+              <input type="button" value="登录" :id="btnLogin" @click="login()" />
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 32-56行邮箱注册账号，暂时没啥用 -->
+    <!-- <el-dialog :model-value="VisibleRegitserDialog" title="邮箱登录" @close="RegisterDialogClose" :before-close="RegisterDialogClose"> -->
+        <!-- <el-form 
+        :label-position="labelPosition" 
+        label-width="auto"
+        style="max-width: 500px"   
+         class="">
+            <el-form-item label="邮箱">
+                <el-input v-model="Email" placeholder="" clearable />
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-input v-model="pwd1" placeholder="" clearable />
+            </el-form-item>
+            
+            <el-row :gutter="20">
+                <el-col :span="10" style="margin-left: 40px;">
+                    <el-input v-model="EmailCode" placeholder="" clearable />
+                </el-col>
+                <el-col :span="6">
+                    <el-button type="primary" @click="EmailSend()">发送验证码</el-button>
+                </el-col>
+            </el-row>
+
+            <el-button type="primary" @click="EmailLogin()">邮箱登录</el-button>
+        </el-form> -->
+    <!-- </el-dialog> -->
 </template>
+    
+
 
 <script>
 
 </script>
 
 <script setup lang = "js">
+    import CryptoJS from 'crypto-js';
     import {ref} from 'vue'; 
     import axios from 'axios';
     import emitter from '@/utils/emitter';
     import {useRouter} from'vue-router';
+import { ROOT_TREE_INJECTION_KEY } from 'element-plus/es/components/tree-v2/src/virtual-tree';
     const router = useRouter();
 
     // 数据
     let username = ref();
     let password = ref();
-    let isadmin = ref();
-    let truth_name = ref();
-
-
+    let errorVisble = ref();
+    let errorMsg = ref();
+    let VisibleRegitserDialog = ref(false);
+    let loginError = ref();
+    //
+    let Email = ref();
+    let EmailCode = ref();
+    let pwd1 = ref();
+    const labelPosition = ref('right');
+    // 登录请求
     const login = () => {
         let URL = process.env.VUE_APP_BASEURL + "loginController/loginCheck";
         axios
         .post(URL, {
             'user_name': username.value,
-            'user_pwd': password.value
+            'user_pwd': HashPassword(password.value)
+            // 'user_pwd': password.value
         })
         .then( ({data}) => {
+            /**
+             * 如果登录验证成功，本地存下token
+             */
             if( data.code == 200 ) {
                 console.log(data.data);
                 localStorage.setItem("token", data.data["token"]);
@@ -60,16 +108,21 @@
                 // emitter.emit('sendTruth_Name', data.data["truth_name"]); 
                 localStorage.setItem("truth_name", data.data["truth_name"]); 
     
-                // emitter.on('se 
+                /**
+                 * 这里根据身份，跳转对应的界面
+                 */
                 if( data.data["isadmin"] === 0 ) {
+                    // router.push("/FileProcessing");
                     router.push('/StuHome');
                 }
                 else {
+                    // router.push("/FileProcessing");
                     router.push('/First');
                 }
             }
             else {
-                //todo 密码错误交互;
+                errorVisble.value = true;
+                errorMsg.value = data.msg; 
                 // alert("登录失败，请检查用户名和密码");
                 console.log(data.msg);
             }
@@ -78,111 +131,190 @@
             console.log(error);
             alert("Login BUG! 请联系管理员");
         });
+        // 哈希加密密码
+    }
+    // 密码加密
+    const HashPassword = (input) => {
+        console.log(CryptoJS.SHA256(input).toString());
+        return CryptoJS.SHA256(input).toString();
+    }
+    const checkPwdLen = () => {
+        let Len = password.value.length;
+        loginError.value = '';
+        if (Len < 6 || Len <= 0 || Len > 20) {
+          loginError.value = '用户密码不合法';
+          return false;
         }
+        return true;
+    }
+    const checkUserNum = () => {
+        let Len = username.value.length;
+        loginError.value = '';
+        if (Len <= 0 || Len > 15) {
+          loginError.value = '用户账号不合法';
+          return false;
+        }
+        return true;
+      }
+    // 打开用户注册的弹窗
+    // const RegisterDialogOpen = () => {
+    //     VisibleRegitserDialog.value = true;
+    // };
+    // const RegisterDialogClose = () => {
+    //     VisibleRegitserDialog.value = false;
+    // };
+    // 发送email
+    // const EmailSend = () => {
+    //     let URL = process.env.VUE_APP_BASEURL + "loginController/EmailSend";
+    //     axios
+    //     .post(URL, {
+    //         'email': Email.value,
+    //     })
+    //     .then( ({data}) => {
+    //         ;
+    //     })
+    //     .catch( error => {
+    //         alert("EmailSend BUG!");
+    //     });
+    // }
+    // const EmailLogin = () => {
+    //     let URL = process.env.VUE_APP_BASEURL + "loginController/EmailLogin";
+    //     axios
+    //     .post(URL, {
+    //         'user_name': Email.value,
+    //         'user_pwd': HashPassword(pwd1.value),
+    //         'code': EmailCode.value  
+    //     })
+    //     .then( ({data}) => {
+    //         if(data.code == 200) 
+    //         {
+    //             router.push("/FileProcessing");
+    //         };
+    //     })
+    //     .catch( error => {
+    //         alert("EmailSend BUG!");
+    //     });;
+    // }
 </script>
 
-<style lang="scss" scoped>
+    
+<style scoped>
+* {
+  margin: 0;
+  padding: 0;
+}
 
-  .login-form {
-  display: flex;
-  flex-direction: column;
-  }
+.imgWrap {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
 
-  .login-wrap {
-      height: 820px;
-      font-family: JetBrains Mono Medium;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* background-color: #0e92b3; */
-      background: url('../assets/backg.jpg');
-      background-size: 100% 100%;
-  }
-      
-  .form-wrapper {
-      width: 300px;
-      background-color: rgba(41, 45, 62, 0.8);
-      color: #fff;
-      border-radius: 2px;
-      padding: 50px;
-  }
-      
-  .form-wrapper .header {
-      text-align: center;
-      font-size: 35px;
-      text-transform: uppercase;
-      line-height: 100px;
-  }
-      
-  .form-wrapper .input-wrapper input {
-      background-color: rgb(41, 45, 62);
-      border: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 15px;
-      color: #fff;
-      outline: none;
-  }
-      
-  .form-wrapper .input-wrapper input::placeholder {
-      text-transform: uppercase;
-  }
-      
-  .form-wrapper .input-wrapper .border-wrapper {
-      background-image: linear-gradient(to right, #e8198b, #0eb4dd);
-      width: 100%;
-      height: 50px;
-      margin-bottom: 20px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-  }
-      
-  .form-wrapper .input-wrapper .border-wrapper .border-item {
-      height: calc(100% - 4px);
-      width: calc(100% - 4px);
-      border-radius: 30px;
-  }
-      
-  .form-wrapper .action {
-      display: flex;
-      justify-content: center;
-  }
-      
-  .form-wrapper .action .btn {
-      width: 60%;
-      text-transform: uppercase;
-      border: 2px solid #0e92b3;
-      text-align: center;
-      line-height: 50px;
-      border-radius: 30px;
-      cursor: pointer;
-  }
-      
-  .form-wrapper .action .btn:hover {
-      background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-  }
-      
-  .form-wrapper .icon-wrapper {
-      text-align: center;
-      width: 60%;
-      margin: 0 auto;
-      margin-top: 20px;
-      border-top: 1px dashed rgb(146, 146, 146);
-      padding: 20px;
-  }
-      
-  .form-wrapper .icon-wrapper i {
-      font-size: 20px;
-      color: rgb(187, 187, 187);
-      cursor: pointer;
-      border: 1px solid #fff;
-      padding: 5px;
-      border-radius: 20px;
-  }
-      
-  .form-wrapper .icon-wrapper i:hover {
-      background-color: #0e92b3;
-  }
+.imgWrap img {
+  width: 100%;
+  height: 100%;
+}
+
+.login_container {
+  width: 450px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  min-height: 387px;
+}
+
+.number_item {
+  margin-bottom: 15px;
+  position: relative;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+  max-height: 40px;
+}
+
+.password_item {
+  margin-bottom: 15px;
+  position: relative;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+  max-height: 40px;
+}
+
+.prex-icon img {
+  width: 25px;
+}
+
+.item {
+  margin: 0 auto;
+  width: 350px;
+  font-size: 16px;
+  color: #ffffff;
+  vertical-align: bottom;
+  border-bottom: 0.5px solid #fff;
+}
+
+.item div {
+  width: 175px;
+  height: 60px;
+  display: inline-block;
+  font-size: 18px;
+  text-align: center;
+  line-height: 60px;
+  cursor: pointer;
+}
+
+.active {
+  border-bottom: 1.5px solid #fff;
+}
+
+.login_content {
+  width: 100%;
+}
+
+.login_content div {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 30px;
+  text-align: left;
+}
+
+.login_content input[type="text"],
+.login_content input[type="password"] {
+  width: 78%;
+  height: 40px;
+  line-height: 40px;
+  font-family: "Microsoft Yahei";
+  margin-left: 10px;
+  border: 0;
+  font-size: 14px;
+  color: #bebdbd;
+  outline: none;
+  background: none;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.login_content input[type="button"] {
+  margin-top: 30px;
+  width: 100%;
+  height: 50px;
+  border-radius: 4px;
+  color: white;
+  font-size: 20px;
+  background: #002954;
+  cursor: pointer;
+  letter-spacing: 4px;
+}
+
+.errors {
+  color: red;
+  font-size: 14px;
+}
 </style>
+  

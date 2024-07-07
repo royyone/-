@@ -57,6 +57,11 @@ const routes = [
     path: '/Temp',
     name: 'Temp',
     component: () => import("../views/Temp.vue"),
+  },
+  {
+    path: '/FileProcessing',
+    name: 'FileProcessing',
+    component: () => import("../views/FileProcessing.vue"),
   }
 ];
 
