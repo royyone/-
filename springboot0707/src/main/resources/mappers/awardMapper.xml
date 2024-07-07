@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot2.mapper.awardMapper">
+
+    <insert id="insertAward" >
+        INSERT INTO award (game_id, school_name, college_name, stu_name, team_name, award, file_path, adviser)
+        VALUES (#{game_id}, #{school_name}, #{college_name}, #{stu_name}, #{team_name}, #{award}, #{file_path}, #{adviser})
+    </insert>
+    <delete id="deleteAward">
+        DELETE FROM award WHERE game_id = #{game_id}
+    </delete>
+    <select id="selectAward">
+        SELECT *
+        FROM award t1
+        LEFT JOIN game t2 ON t1.game_id = t2.game_id
+        WHERE t1.game_id = #{game_id};
+    </select>
+    <update id="updateAward">
+        UPDATE award
+        SET file_path = #{file_path}, status = #{status}
+        WHERE award_id = #{award_id};
+    </update>
+    <select id="stuSelect">
+        SELECT *
+        FROM award t1
+        LEFT JOIN game t2 ON t1.game_id = t2.game_id
+        WHERE t1.stu_name LIKE CONCAT('%', #{stu_name}, '%')
+        AND t1.status = 2;
+    </select>
+</mapper>

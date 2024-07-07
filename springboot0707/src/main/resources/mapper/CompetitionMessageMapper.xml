@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot2.Dao.CompetitionMessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.springboot2.entity.CompetitionMessage">
+        <id column="competition_id" property="competitionId" />
+        <result column="competition_type" property="competitionType" />
+        <result column="competition_level" property="competitionLevel" />
+        <result column="competition_name" property="competitionName" />
+        <result column="competition_register" property="competitionRegister" />
+        <result column="competition_year" property="competitionYear" />
+        <result column="competition_term" property="competitionTerm" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        competition_id, competition_type, competition_level, competition_name, competition_register, competition_year, competition_term
+    </sql>
+
+</mapper>

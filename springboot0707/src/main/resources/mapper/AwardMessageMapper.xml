@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot2.Dao.AwardMessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.springboot2.entity.AwardMessage">
+        <result column="award_id" property="awardId" />
+        <result column="competition_id" property="competitionId" />
+        <result column="award_college" property="awardCollege" />
+        <result column="award_grade" property="awardGrade" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        award_id, competition_id, award_college, award_grade
+    </sql>
+
+</mapper>

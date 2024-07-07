@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot2.mapper.gameMapper">
+
+    <!--
+    mapper接口和映射文件要保证两个一致:
+        1，mapper接口的全类名和映射文件的namespace一致
+        2、mapper接口中的方法的方法名要和映射文件中的sqL的id保持一致
+    -->
+    <insert id="insertGame" >
+        INSERT INTO game (game_type, game_level, game_date, game_name, game_author, organizer)
+        VALUES (#{game_type}, #{game_level}, #{game_date}, #{game_name}, #{game_author}, #{organizer})
+    </insert>
+    <delete id="deleteGame">
+        DELETE FROM game WHERE game_id = #{game_id}
+    </delete>
+    <delete id="deleteAward">
+        DELETE FROM award WHERE game_id = #{game_id}
+    </delete>
+    <select id="selectGame">
+        SELECT *
+        FROM game
+    </select>
+<!--    通过比赛id查询所有比赛-->
+    <select id="selectById">
+        SELECT *
+        FROM game
+        WHERE game_id = #{game_id}
+    </select>
+<!--    修改发布状态为1-->
+    <update id="updateStatusById">
+        UPDATE game
+        SET game_status = 1
+        WHERE game_id = #{game_id}
+    </update>
+</mapper>

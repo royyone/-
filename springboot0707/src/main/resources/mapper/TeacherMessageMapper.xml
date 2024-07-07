@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot2.Dao.TeacherMessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.springboot2.entity.Teacher">
+        <id column="teacher_id" property="teacherId" />
+        <result column="teacher_username" property="teacherUsername" />
+        <result column="teacher_password" property="teacherPassword" />
+        <result column="teacher_isadmin" property="teacherIsadmin" />
+        <result column="teacher_college" property="teacherCollege" />
+        <result column="teacher_name" property="teacherName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        teacher_id, teacher_username, teacher_password, teacher_isadmin, teacher_college, teacher_name
+    </sql>
+
+</mapper>
