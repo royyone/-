@@ -2,11 +2,9 @@ package com.example.springboot2.service.impl;
 
 import com.example.springboot2.entity.Student;
 import com.example.springboot2.Dao.StudentMessageMapper;
-import com.example.springboot2.service.StudentMessageService;
+import com.example.springboot2.service.LoginService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * <p>
@@ -17,7 +15,7 @@ import java.util.List;
  * @since 2024-07-07
  */
 @Service
-public class StudentMessageServiceImpl extends ServiceImpl<StudentMessageMapper, Student> implements StudentMessageService {
+public class LoginServiceImpl extends ServiceImpl<StudentMessageMapper, Student> implements LoginService {
 
     @Override
     public Student studentCheck(Student student) {
