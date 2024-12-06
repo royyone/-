@@ -17,11 +17,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-                .addPathPatterns("/**")  // 拦截所有请求，通过判断token是否合法来决定是否需要登录
-                .excludePathPatterns("/loginController/loginCheck","/fileController/preview/**"
-                        ,"/fileController/downloadFile/**"
-                ,"/fileController/downloadTemplate");
+
+                .excludePathPatterns("/loginController/loginCheck","/loginController/**","/loginController/EmailLogin","/fileController/preview/**"
+                ,"/fileController/downloadTemplate/**"
+                ,"/well-known/acme-challenge/**"
+                ,"/fileController/downloadFile/**")
 //                .excludePathPatterns("/user/login", "/user/register", "/**/export", "/**/import","/file/**");//排除这些，这些不用验证，直接登录
+                .addPathPatterns("/**");  // 拦截所有请求，通过判断token是否合法来决定是否需要登录
     }
     @Bean
     public JwtInterceptor jwtInterceptor() {

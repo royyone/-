@@ -4,10 +4,13 @@ import com.auth0.jwt.JWT;
 import com.example.springboot2.Dao.loginDao;
 import com.example.springboot2.Exception.ExceptionCodeMsg;
 import com.example.springboot2.Exception.ServiceException;
-import com.example.springboot2.Result;
+import com.example.springboot2.Utils.Result;
 import com.example.springboot2.Utils.TokenUtils;
 import com.example.springboot2.pojo.Login;
+import jakarta.annotation.Resource;
+
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.web.bind.annotation.*;
 
 
@@ -15,11 +18,17 @@ import javax.xml.transform.Source;
 import java.io.IOException;
 import java.rmi.ServerException;
 import java.rmi.server.ExportException;
+import java.util.Random;
 
 //@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/loginController")
 public class loginController {
+    String code;
+    // todo 邮箱发送验证码
+
+
+
     @PostMapping("/loginCheck")
     public Result loginCheck(@RequestBody Login login) throws IOException {
 //        System.out.println(login.toString());

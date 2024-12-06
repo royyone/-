@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class loginDao {
+
     public static Login loginCheck(Login login) throws IOException {
         InputStream stream = Resources.getResourceAsStream("mybatis-config.xml");
         SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();

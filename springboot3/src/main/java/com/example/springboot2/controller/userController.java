@@ -6,7 +6,7 @@
 package com.example.springboot2.controller;
 
 import com.example.springboot2.Dao.userDao;
-import com.example.springboot2.Result;
+import com.example.springboot2.Utils.Result;
 import com.example.springboot2.pojo.Login;
 import org.springframework.web.bind.annotation.*;
 

@@ -33,4 +33,9 @@
         WHERE user_name = #{username}
         LIMIT 1
     </select>
+<!--    Login (String userName, String userPwd);-->
+    <select id="InsertEmail">
+        INSERT INTO users (user_name, user_pwd, isadmin, truth_name, )
+        VALUES ('张三', 20, '计算机科学');
+    </select>
 </mapper>

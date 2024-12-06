@@ -1,6 +1,6 @@
 package com.example.springboot2.Exception;
 
-import com.example.springboot2.Result;
+import com.example.springboot2.Utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;

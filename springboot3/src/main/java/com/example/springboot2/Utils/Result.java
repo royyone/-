@@ -3,18 +3,12 @@
  * author: suhsbeba
  * date: 2023/11/24 12:09
  */
-package com.example.springboot2;
+package com.example.springboot2.Utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +17,6 @@ import java.util.Map;
 public class Result {
     private static final String CODE_SUCCESS = "200";
     private static final String CODE_DEFINE_ERROR = "501"; // 自定义错误
-
     private String code;
     private String msg;
     private Object data;

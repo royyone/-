@@ -6,7 +6,8 @@
 package com.example.springboot2.controller;
 
 import com.example.springboot2.Dao.gameDao;
-import com.example.springboot2.Result;
+
+import com.example.springboot2.Utils.Result;
 import com.example.springboot2.pojo.Certificate;
 import com.example.springboot2.pojo.Game;
 import org.springframework.web.bind.annotation.*;
